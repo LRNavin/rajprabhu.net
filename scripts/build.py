@@ -394,7 +394,7 @@ def index_page():
 <section class="hero">
   <div class="hero-text">
     <h1>Navin Raj Prabhu</h1>
-    <p class="lede">I research how machines can recognise and generate emotion in human speech.</p>
+    <p class="lede">I research how machines understand and generate human speech, from the emotion in a voice to audio intelligence for voice AI.</p>
     <p class="intro">PhD in Computer Science from the University of Hamburg, where I built probabilistic and generative models for emotion recognition and speech emotion conversion.</p>
     <p class="now-at">
       {AIC_MARK}
@@ -477,7 +477,7 @@ def index_page():
 </section>
 """
     return page("Navin Raj Prabhu: speech and affective computing research",
-                "Navin Raj Prabhu researches speech emotion recognition and emotion-conditioned speech synthesis with probabilistic and generative neural networks. PhD, University of Hamburg.",
+                "Navin Raj Prabhu researches speech emotion recognition, emotion-conditioned speech synthesis and audio intelligence for voice AI. PhD, University of Hamburg; Machine Learning Researcher at ai-coustics.",
                 "index.html", body, "index.html")
 
 
