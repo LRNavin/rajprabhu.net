@@ -36,7 +36,7 @@ Always commit the regenerated HTML in the same commit as the `build.py` change t
 - **Add news:** prepend a tuple to `NEWS`: `(iso_date, display_label, html)`. Link papers with `publications.html#<id>`.
 - **CV entries:** edit `EDUCATION`, `EXPERIENCE`, `TEACHING`, `INTERESTS`.
 - **Job title or bio:** the intro sentence is in `index_page()`; the title also appears in `EXPERIENCE` and in the JSON-LD `jobTitle` inside `page()`. Change all three together.
-- **Dissertation section:** the facts list and the two columns (Recognising affect, Synthesising affect in speech) are in `index_page()`. The overview diagram is `scene_svg()`; the column charts are `dist_svg()` (label distribution) and `conversion_svg()` (pitch contours, illustrative).
+- **Dissertation section:** the facts list and the two columns (Recognising affect, Synthesising affect in speech) are in `index_page()`. The overview diagram is `scene_svg()`; the column figures are `dist_svg()` (label distribution) and `conversion_svg()` (the emotion conversion pipeline).
 
 ## Design rules
 

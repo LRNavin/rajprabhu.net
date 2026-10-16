@@ -393,20 +393,23 @@ def scene_svg():
     out.append(f'<circle class="zone zone-1" cx="{fx:.1f}" cy="{fy:.1f}" r="37"/>')
     # (3) agent: zone, a rounded device with a speaker, and sound arcs towards the table
     out.append(f'<circle class="zone zone-3" cx="{ax}" cy="{ay}" r="{zone3_r}"/>')
-    out.append(f'<g class="agent"><rect x="{ax-19}" y="{ay-19}" width="38" height="38" rx="11"/>'
-               f'<circle cx="{ax}" cy="{ay}" r="8"/><circle class="dot" cx="{ax}" cy="{ay}" r="2.6"/></g>')
-    wx = ax - 20
+    out.append(f'<g class="agent">'
+               f'<line x1="{ax}" x2="{ax}" y1="{ay-24}" y2="{ay-31}"/><circle class="dot" cx="{ax}" cy="{ay-34}" r="2.4"/>'
+               f'<rect x="{ax-21}" y="{ay-24}" width="42" height="36" rx="13"/>'
+               f'<circle class="dot" cx="{ax-8}" cy="{ay-6}" r="2.8"/><circle class="dot" cx="{ax+8}" cy="{ay-6}" r="2.8"/>'
+               f'<path d="M{ax-26},{ay+38}C{ax-26},{ay+22} {ax-14},{ay+17} {ax},{ay+17}S{ax+26},{ay+22} {ax+26},{ay+38}"/></g>')
+    wx, ay_w = ax - 22, ay - 6
     arcs = []
     for r in (16, 28, 40):
         dy, dx = r * math.sin(math.radians(40)), r * math.cos(math.radians(40))
-        arcs.append(f'<path d="M{wx-dx:.1f},{ay-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{ay+dy:.1f}"/>')
+        arcs.append(f'<path d="M{wx-dx:.1f},{ay_w-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{ay_w+dy:.1f}"/>')
     out.append(f'<g class="waves">{"".join(arcs)}</g>')
     # number badges
     s = math.sqrt(0.5)
     for n, (bx, by) in {1: (fx + 27, fy - 27), 2: (cx + zone2_r * s, cy - zone2_r * s), 3: (ax + zone3_r * s, ay - zone3_r * s)}.items():
         out.append(f'<g class="badge badge-{n}"><circle cx="{bx:.1f}" cy="{by:.1f}" r="13"/><text x="{bx:.1f}" y="{by + 4.5:.1f}" text-anchor="middle">{n}</text></g>')
     return f"""<figure class="scene" aria-labelledby="scene-cap">
-<svg viewBox="62 10 450 280" role="img" aria-label="Diagram of a meeting seen from above: four people around a round table and a social agent beside them. A ring marks one person (1, individual-level affect recognition), a dashed circle encloses the whole group (2, group-level affect recognition), and the agent emits sound waves towards the table (3, affect synthesis).">
+<svg viewBox="62 10 450 280" role="img" aria-label="Diagram of a meeting seen from above: four people around a round table and a social agent beside them. A ring marks one person (1, individual-level affect recognition), a dashed circle encloses the whole group (2, group-level affect recognition), and the agent, a small robot facing the viewer, emits sound waves towards the table (3, affect synthesis).">
 {''.join(out)}
 </svg>
 <figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
@@ -414,48 +417,52 @@ def scene_svg():
 
 
 def conversion_svg():
-    """Illustration of speech emotion conversion: the pitch contour of one sentence at three arousal levels,
-    one row per level on a shared time axis. Higher arousal sits higher and ends sooner."""
-    W, H = 460, 252
-    x0, x1 = 112, W - 16
-    T = 1.3  # seconds shown on the axis
-    def X(t): return x0 + t / T * (x1 - x0)
-    segs = [(0.0, 0.2), (0.26, 0.5), (0.56, 0.74), (0.8, 1.0)]  # voiced stretches, normalised time
-    versions = [  # class, baseline y, duration (s), mean pitch, variability, label
-        ("high", 84, 0.82, 0.78, 0.2, "High arousal"),
-        ("input", 144, 1.0, 0.5, 0.11, "Input"),
-        ("low", 204, 1.2, 0.3, 0.055, "Low arousal"),
-    ]
-    axis_y = 216
-    rows, paths, labels = [], [], []
-    for cls, base, dur, mean, var, label in versions:
-        d = []
-        for a, b in segs:
-            n = 16
-            pts = []
-            for i in range(n + 1):
-                u = a + (b - a) * i / n
-                p = mean + var * (math.sin(u * 7.0 + 0.4) + 0.4 * math.sin(u * 17.0 + 1.1)) - 0.12 * u * mean
-                pts.append((X(u * dur), base - 68 * p))
-            line = " L".join(f"{px:.1f},{py:.1f}" for px, py in pts)
-            d.append("M" + line)
-        paths.append(f'<path class="pc pc-{cls}" pathLength="1" d="{" ".join(d)}"/>')
-        rows.append(f'<line class="row" x1="{x0}" x2="{X(dur):.1f}" y1="{base}" y2="{base}"/>'
-                    f'<line class="end end-{cls}" x1="{X(dur):.1f}" x2="{X(dur):.1f}" y1="{base - 5}" y2="{base + 5}"/>')
-        labels.append(f'<text class="pl pl-{cls}" x="{x0 - 12}" y="{base - 2}" text-anchor="end">{E(label)}</text>')
-    ticks = "".join(f'<text class="tick" x="{X(t):.1f}" y="{axis_y + 18}" text-anchor="middle">{t:.1f} s</text>' for t in (0, 0.4, 0.8, 1.2))
-    return f"""<figure class="dist conv" aria-labelledby="conv-cap">
-<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pitch contours of one sentence at three arousal levels, one row each. The high-arousal version is higher, more varied and ends sooner; the low-arousal version is lower, flatter and takes longer.">
-  <line class="yaxis" x1="{x0}" x2="{x0}" y1="14" y2="{axis_y}"/>
-  <text class="lbl" x="{x0 - 12}" y="18" text-anchor="end">Pitch</text>
-  {"".join(rows)}
-  {"".join(paths)}
-  {"".join(labels)}
-  <line class="axis" x1="{x0}" x2="{X(T):.1f}" y1="{axis_y}" y2="{axis_y}"/>
-  {ticks}
-  <text class="lbl" x="{x0}" y="{H - 2}">Time</text>
+    """Illustration of speech emotion conversion as a pipeline: speech is split into speaker, content and
+    emotion embeddings, only the emotion is changed, and a decoder resynthesises the sentence."""
+    W, H = 460, 250
+    mid = 118
+    def wave(x, n, step, scale, cls):
+        bars = []
+        for i in range(n):
+            env = math.sin(math.pi * (i + 0.5) / n) ** 0.7
+            h = scale * env * (0.55 + 0.45 * abs(math.sin(i * 2.3 + 0.4)))
+            bars.append(f"M{x + i * step:.1f},{mid - h:.1f}v{2 * h:.1f}")
+        return f'<path class="wave {cls}" d="{"".join(bars)}"/>'
+    pills = [("Speaker", 58, ""), ("Content", mid, ""), ("Emotion", 178, " is-emotion")]
+    px0, px1 = 128, 226
+    out = []
+    # input speech
+    out.append(wave(14, 15, 5, 26, "in"))
+    out.append(f'<text class="lbl" x="48" y="{mid + 44}" text-anchor="middle">Input speech</text>')
+    # split into three embeddings
+    out.append(f'<path class="flow" d="M90,{mid}H110"/>')
+    out.append(f'<path class="flow" d="M110,58V178"/>')
+    for name, y, extra in pills:
+        out.append(f'<path class="flow" d="M110,{y}H{px0 - 2}" marker-end="url(#ah)"/>')
+        out.append(f'<g class="pill{extra}"><rect x="{px0}" y="{y - 15}" width="{px1 - px0}" height="30" rx="15"/>'
+                   f'<text x="{(px0 + px1) / 2}" y="{y + 4}" text-anchor="middle">{name}</text></g>')
+    # arousal control on the emotion embedding
+    sy = 214
+    out.append(f'<g class="ctl"><line x1="{px0 + 8}" x2="{px1 - 8}" y1="{sy}" y2="{sy}"/>'
+               f'<circle cx="{px1 - 24}" cy="{sy}" r="4.5"/>'
+               f'<text x="{px0 + 8}" y="{sy + 16}">Low</text><text x="{px1 - 8}" y="{sy + 16}" text-anchor="end">High</text>'
+               f'<text class="lbl-accent" x="{(px0 + px1) / 2}" y="{sy - 9}" text-anchor="middle">Arousal</text></g>')
+    # merge into the decoder
+    out.append(f'<path class="flow" d="M{px1},58H246V178H{px1}"/>')
+    out.append(f'<path class="flow" d="M{px1},{mid}H246"/>')
+    out.append(f'<path class="flow" d="M246,{mid}H268" marker-end="url(#ah)"/>')
+    out.append(f'<g class="box"><rect x="272" y="{mid - 22}" width="78" height="44" rx="6"/>'
+               f'<text x="311" y="{mid + 4}" text-anchor="middle">Decoder</text></g>')
+    out.append(f'<path class="flow" d="M350,{mid}H370" marker-end="url(#ah)"/>')
+    # converted speech: same sentence, higher and faster
+    out.append(wave(380, 15, 4.2, 34, "out"))
+    out.append(f'<text class="lbl" x="410" y="{mid + 44}" text-anchor="middle">Converted speech</text>')
+    return f"""<figure class="dist pipe" aria-labelledby="conv-cap">
+<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pipeline diagram. Input speech is split into speaker, content and emotion embeddings. An arousal control changes only the emotion embedding, set towards high. A decoder turns the three embeddings back into converted speech, drawn with a denser, taller waveform.">
+  <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0.5L7.5,4L0,7.5Z"/></marker></defs>
+  {''.join(out)}
 </svg>
-<figcaption id="conv-cap">One sentence, three arousal levels. Converted speech rises in pitch and speeds up when excited, and drops and slows down when calm. Illustrative contours.</figcaption>
+<figcaption id="conv-cap">Speech is split into speaker, content and emotion embeddings. Only the emotion embedding is changed, here towards higher arousal, and a decoder resynthesises the same sentence with the new tone. No parallel recordings are needed.</figcaption>
 </figure>"""
 
 

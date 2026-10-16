@@ -377,7 +377,7 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 
 .scene { margin: 0 0 0.5rem; }
 .scene svg { display: block; width: 100%; max-width: 33rem; height: auto; overflow: visible; }
-.scene .person .head, .scene .person .shoulders, .scene .agent rect, .scene .agent circle {
+.scene .person .head, .scene .person .shoulders, .scene .agent rect, .scene .agent path, .scene .agent line {
   fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82;
 }
 .scene .agent .dot { fill: var(--ink); stroke: none; opacity: 0.82; }
@@ -405,21 +405,24 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 
 .strand .dist { margin: 0 0 0.5rem; max-width: none; }
 .strand .dist figcaption { font-size: var(--t-xs); max-width: none; margin-top: 0.5rem; }
-.conv .pc { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.conv .pc-input { stroke: var(--muted); stroke-dasharray: 3 4; stroke-width: 1.4; }
-.conv .pc-low { stroke: var(--annot); }
-.conv .pc-high { stroke: var(--accent); stroke-width: 2.4; }
-.conv .row, .conv .yaxis { stroke: var(--rule); stroke-width: 1; }
-.conv .end { stroke: var(--annot); stroke-width: 1.2; }
-.conv .end-high { stroke: var(--accent); }
-.conv .pl { font-family: var(--sans); font-size: 11.5px; fill: var(--muted); }
-.conv .pl-high { fill: var(--accent); font-weight: 600; }
+.pipe .wave { fill: none; stroke: var(--annot); stroke-width: 2.2; stroke-linecap: round; }
+.pipe .wave.out { stroke: var(--accent); }
+.pipe .flow { fill: none; stroke: var(--rule); stroke-width: 1.2; }
+.pipe .ah { fill: var(--rule); }
+.pipe .pill rect, .pipe .box rect { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: 0.75; }
+.pipe .pill text, .pipe .box text { fill: var(--ink); font-family: var(--sans); font-size: 11.5px; }
+.pipe .pill.is-emotion rect { stroke: var(--accent); opacity: 1; fill: var(--accent-wash); }
+.pipe .pill.is-emotion text { fill: var(--accent); font-weight: 600; }
+.pipe .ctl line { stroke: var(--rule); stroke-width: 1.5; stroke-linecap: round; }
+.pipe .ctl circle { fill: var(--accent); }
+.pipe .ctl text { fill: var(--muted); font-family: var(--sans); font-size: 10.5px; }
 @media (prefers-reduced-motion: no-preference) {
-  .conv.play .pc { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.6,.05,.25,1) forwards; }
-  .conv.play .pc-input { animation: fade 0.5s ease-out forwards; opacity: 0; stroke-dasharray: 3 4; stroke-dashoffset: 0; }
-  .conv.play .pc-low { animation-delay: 0.4s; }
-  .conv.play .pc-high { animation-delay: 0.8s; }
-  .conv.play .end-high { opacity: 0; animation: fade 0.6s ease-out 1.7s forwards; }
+  .pipe.play .pill, .pipe.play .ctl, .pipe.play .box, .pipe.play .wave.out, .pipe.play .flow { opacity: 0; animation: fade 0.5s ease-out forwards; }
+  .pipe.play .flow { animation-delay: 0.2s; }
+  .pipe.play .pill { animation-delay: 0.4s; }
+  .pipe.play .ctl { animation-delay: 0.9s; }
+  .pipe.play .box { animation-delay: 1.2s; }
+  .pipe.play .wave.out { animation-delay: 1.5s; }
 }
 
 .news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }
