@@ -376,16 +376,15 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .thesis-intro { margin-bottom: 1.25rem; }
 
 .scene { margin: 0 0 0.5rem; }
-.scene svg { display: block; width: 100%; max-width: 33rem; height: auto; overflow: visible; }
-.scene .person .head, .scene .person .shoulders, .scene .agent rect, .scene .agent path, .scene .agent line {
-  fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82;
-}
-.scene .agent .dot { fill: var(--ink); stroke: none; opacity: 0.82; }
-.scene .speech { fill: none; stroke: var(--annot); stroke-width: 1.8; stroke-linecap: round; }
-.scene .is-focus .speech { stroke: var(--accent); }
-.scene .table { fill: var(--panel); stroke: var(--annot); stroke-width: 1.3; }
+.scene svg { display: block; width: 100%; max-width: 36rem; height: auto; overflow: visible; }
+.scene .person .head, .scene .person .torso, .scene .agent .face, .scene .agent .body, .scene .agent .dot { fill: var(--ink); opacity: 0.8; }
+.scene .agent line { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; opacity: 0.8; }
+.scene .agent .eye { fill: var(--bg); }
+.scene .speech { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.scene .table, .scene .table-rim { fill: var(--panel); stroke: var(--annot); stroke-width: 1.2; stroke-linejoin: round; }
+.scene .paper { fill: var(--bg); stroke: var(--annot); stroke-width: 1; stroke-linejoin: round; }
 .scene .zone { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
-.scene .zone-1 { fill: none; stroke-dasharray: none; stroke-width: 1.6; }
+.scene .zone-1 { stroke-dasharray: none; stroke-width: 1.6; }
 .scene .waves path { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
 .scene .badge circle { fill: var(--accent); }
 .scene .badge text { fill: var(--accent-ink); font-family: var(--sans); font-size: 13px; font-weight: 650; }
@@ -396,9 +395,9 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   background: var(--accent); color: var(--accent-ink); font-size: 0.7rem; font-weight: 650;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .scene.armed .zone, .scene.armed .badge, .scene.armed .waves { opacity: 0; }
-  .scene.play .zone, .scene.play .badge, .scene.play .waves { animation: fade 0.5s ease-out forwards; }
-  .scene.play .zone-1, .scene.play .badge-1 { animation-delay: 0.1s; }
+  .scene.armed .zone, .scene.armed .badge, .scene.armed .waves, .scene.armed .speech { opacity: 0; }
+  .scene.play .zone, .scene.play .badge, .scene.play .waves, .scene.play .speech { animation: fade 0.5s ease-out forwards; }
+  .scene.play .zone-1, .scene.play .badge-1, .scene.play .speech { animation-delay: 0.1s; }
   .scene.play .zone-2, .scene.play .badge-2 { animation-delay: 0.55s; }
   .scene.play .zone-3, .scene.play .badge-3, .scene.play .waves { animation-delay: 1s; }
 }
@@ -415,6 +414,7 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .pipe .pill.is-emotion text { fill: var(--accent); font-weight: 600; }
 .pipe .ctl line { stroke: var(--rule); stroke-width: 1.5; stroke-linecap: round; }
 .pipe .ctl circle { fill: var(--accent); }
+.pipe .wave.out-low { opacity: 0; }
 .pipe .ctl text { fill: var(--muted); font-family: var(--sans); font-size: 10.5px; }
 @media (prefers-reduced-motion: no-preference) {
   .pipe.play .pill, .pipe.play .ctl, .pipe.play .box, .pipe.play .wave.out, .pipe.play .flow { opacity: 0; animation: fade 0.5s ease-out forwards; }
@@ -422,8 +422,13 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   .pipe.play .pill { animation-delay: 0.4s; }
   .pipe.play .ctl { animation-delay: 0.9s; }
   .pipe.play .box { animation-delay: 1.2s; }
-  .pipe.play .wave.out { animation-delay: 1.5s; }
+  .pipe.play .wave.out-high { animation: fade 0.5s ease-out 1.5s forwards, swap-high 8s ease-in-out 2.6s infinite; }
+  .pipe.play .wave.out-low { animation: swap-low 8s ease-in-out 2.6s infinite; }
+  .pipe.play .ctl circle { animation: slide 8s ease-in-out 2.6s infinite; }
 }
+@keyframes slide { 0%, 20% { transform: translateX(0); } 40%, 60% { transform: translateX(-82px); } 80%, 100% { transform: translateX(0); } }
+@keyframes swap-high { 0%, 20% { opacity: 1; } 40%, 60% { opacity: 0; } 80%, 100% { opacity: 1; } }
+@keyframes swap-low { 0%, 20% { opacity: 0; } 40%, 60% { opacity: 1; } 80%, 100% { opacity: 0; } }
 
 .news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }
 .news-photo img { display: block; width: 100%; height: auto; border-radius: 4px; background: var(--panel); }

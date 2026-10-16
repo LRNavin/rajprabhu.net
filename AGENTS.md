@@ -44,7 +44,7 @@ Always commit the regenerated HTML in the same commit as the `build.py` change t
 - Typography: Schibsted Grotesk for headings and UI text, Source Serif 4 for body text. Sentence case everywhere; no all-caps labels.
 - One accent colour (`--accent`) for links, the dashed contribution boxes and chart highlights. Do not add more accents or gradients.
 - Figures (`scene_svg()`, `dist_svg()`, `conversion_svg()`) are drawn in code as inline SVG and coloured with CSS variables so they follow the theme. Keep them inline; an `<img>` SVG cannot see the page's theme. New illustrations should match this style: thin neutral strokes, one accent colour, sans labels, no traced or clip-art imagery.
-- Motion: only the figure reveals in the dissertation section, triggered once on scroll (`playOnView` in `main.js`) and wrapped in `prefers-reduced-motion: no-preference`. Do not add entrance animations elsewhere.
+- Motion: only the figure reveals in the dissertation section, triggered once on scroll (`playOnView` in `main.js`), plus the slow arousal-slider loop in `conversion_svg()`; all wrapped in `prefers-reduced-motion: no-preference`. Do not add animations elsewhere.
 - Layout must not scroll sideways at 360 px wide. Keep visible focus outlines and meaningful `alt` text.
 
 ## Rules that must not be broken

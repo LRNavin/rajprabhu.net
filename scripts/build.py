@@ -365,51 +365,46 @@ def dist_svg():
 
 
 def scene_svg():
-    """Dissertation overview, drawn from scratch as a top-down view of a meeting.
-    Four people sit around a round table and a social agent sits just outside the group.
+    """Dissertation overview after Figure 1.1 of the thesis, drawn from scratch: a meeting seen from across
+    the table. Three people sit behind it as flat silhouettes and a social agent sits at the right end.
     (1) one person's affect, (2) the group's affect, (3) the agent expressing affect in speech."""
-    cx, cy = 205, 150          # table centre
-    table_r, seat_r = 52, 98
-    seats = [100, 160, 220, 280]   # degrees, clockwise from the right; the open side faces the agent
-    focus = 2                      # index into seats
-    ax, ay, zone3_r = 440, 150, 50  # agent centre and its zone radius
-    zone2_r = 126
+    tx, ty, trx, try_ = 320, 205, 240, 36   # table ellipse
+    def person(x, y, r, cls="person"):
+        """A flat silhouette: head and a torso with sloped shoulders. The table hides the lower torso."""
+        w, top = 2.0 * r, y + 1.2 * r
+        d = (f"M{x-w:.1f},215 V{top+20:.1f} Q{x-w:.1f},{top+2:.1f} {x-w*0.5:.1f},{top:.1f} "
+             f"L{x-r*0.4:.1f},{top-3:.1f} L{x+r*0.4:.1f},{top-3:.1f} L{x+w*0.5:.1f},{top:.1f} "
+             f"Q{x+w:.1f},{top+2:.1f} {x+w:.1f},{top+20:.1f} V215 Z")
+        return f'<g class="{cls}"><path class="torso" d="{d}"/><circle class="head" cx="{x}" cy="{y}" r="{r}"/></g>'
+    def paper(x, y):
+        return f'<path class="paper" d="M{x-14},{y} l22,-6 l11,5 l-22,6 Z"/>'
     out = []
-    # (2) group zone, then the table on top of it
-    out.append(f'<circle class="zone zone-2" cx="{cx}" cy="{cy}" r="{zone2_r}"/>')
-    out.append(f'<circle class="table" cx="{cx}" cy="{cy}" r="{table_r}"/>')
-    # people seen from above: head, shoulders behind it, and a short speech waveform towards the table
-    for i, deg in enumerate(seats):
-        a = math.radians(deg)
-        px, py = cx + seat_r * math.cos(a), cy + seat_r * math.sin(a)
-        cls = "person is-focus" if i == focus else "person"
-        out.append(f'<g class="{cls}" transform="translate({px:.1f},{py:.1f}) rotate({deg})">'
-                   '<path class="speech" d="M-22,-3v6M-27,-7v14M-32,-10v20M-37,-5v10M-42,-3v6"/>'
-                   '<path class="shoulders" d="M4.9,-19A21,21 0 0 1 4.9,19"/>'
-                   '<circle class="head" r="11"/></g>')
-        if i == focus:  # ring centre sits a little towards the table so the ring also holds the speech
-            fx, fy = px - 10 * math.cos(a), py - 10 * math.sin(a)
-    # (1) individual: a solid ring around one person and what they say
-    out.append(f'<circle class="zone zone-1" cx="{fx:.1f}" cy="{fy:.1f}" r="37"/>')
-    # (3) agent: zone, a rounded device with a speaker, and sound arcs towards the table
-    out.append(f'<circle class="zone zone-3" cx="{ax}" cy="{ay}" r="{zone3_r}"/>')
+    out.append(person(160, 118, 19))
+    out.append(person(280, 116, 19, "person is-focus"))
+    out.append(person(400, 118, 19))
+    ax, ay = 520, 118
     out.append(f'<g class="agent">'
-               f'<line x1="{ax}" x2="{ax}" y1="{ay-24}" y2="{ay-31}"/><circle class="dot" cx="{ax}" cy="{ay-34}" r="2.4"/>'
-               f'<rect x="{ax-21}" y="{ay-24}" width="42" height="36" rx="13"/>'
-               f'<circle class="dot" cx="{ax-8}" cy="{ay-6}" r="2.8"/><circle class="dot" cx="{ax+8}" cy="{ay-6}" r="2.8"/>'
-               f'<path d="M{ax-26},{ay+38}C{ax-26},{ay+22} {ax-14},{ay+17} {ax},{ay+17}S{ax+26},{ay+22} {ax+26},{ay+38}"/></g>')
-    wx, ay_w = ax - 22, ay - 6
+               f'<line x1="{ax}" x2="{ax}" y1="{ay-19}" y2="{ay-27}"/><circle class="dot" cx="{ax}" cy="{ay-30}" r="2.8"/>'
+               f'<rect class="face" x="{ax-22}" y="{ay-19}" width="44" height="38" rx="14"/>'
+               f'<circle class="eye" cx="{ax-9}" cy="{ay}" r="3.2"/><circle class="eye" cx="{ax+9}" cy="{ay}" r="3.2"/>'
+               f'<path class="body" d="M{ax-26},215 V{ay+47} C{ax-26},{ay+32} {ax-14},{ay+26} {ax},{ay+26} S{ax+26},{ay+32} {ax+26},{ay+47} V215 Z"/></g>')
+    out.append(f'<path class="table-rim" d="M{tx-trx},{ty} v9 A{trx},{try_} 0 0 0 {tx+trx},{ty+9} v-9 Z"/>')
+    out.append(f'<ellipse class="table" cx="{tx}" cy="{ty}" rx="{trx}" ry="{try_}"/>')
+    out.append(paper(190, 190) + paper(312, 184) + paper(432, 190))
+    out.append('<rect class="zone zone-2" x="100" y="76" width="350" height="118" rx="12"/>')
+    out.append('<rect class="zone zone-1" x="232" y="84" width="96" height="110" rx="9"/>')
+    out.append('<rect class="zone zone-3" x="468" y="76" width="104" height="118" rx="12"/>')
+    out.append('<path class="speech" d="M306,114v8M311,109v18M316,112v12M321,115v6"/>')
+    wx, wy = ax - 30, ay - 2
     arcs = []
-    for r in (16, 28, 40):
+    for r in (14, 26, 38):
         dy, dx = r * math.sin(math.radians(40)), r * math.cos(math.radians(40))
-        arcs.append(f'<path d="M{wx-dx:.1f},{ay_w-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{ay_w+dy:.1f}"/>')
+        arcs.append(f'<path d="M{wx-dx:.1f},{wy-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{wy+dy:.1f}"/>')
     out.append(f'<g class="waves">{"".join(arcs)}</g>')
-    # number badges
-    s = math.sqrt(0.5)
-    for n, (bx, by) in {1: (fx + 27, fy - 27), 2: (cx + zone2_r * s, cy - zone2_r * s), 3: (ax + zone3_r * s, ay - zone3_r * s)}.items():
-        out.append(f'<g class="badge badge-{n}"><circle cx="{bx:.1f}" cy="{by:.1f}" r="13"/><text x="{bx:.1f}" y="{by + 4.5:.1f}" text-anchor="middle">{n}</text></g>')
+    for n, (bx, by) in {1: (232, 84), 2: (100, 76), 3: (468, 76)}.items():
+        out.append(f'<g class="badge badge-{n}"><circle cx="{bx}" cy="{by}" r="13"/><text x="{bx}" y="{by + 4.5}" text-anchor="middle">{n}</text></g>')
     return f"""<figure class="scene" aria-labelledby="scene-cap">
-<svg viewBox="62 10 450 280" role="img" aria-label="Diagram of a meeting seen from above: four people around a round table and a social agent beside them. A ring marks one person (1, individual-level affect recognition), a dashed circle encloses the whole group (2, group-level affect recognition), and the agent, a small robot facing the viewer, emits sound waves towards the table (3, affect synthesis).">
+<svg viewBox="76 58 500 196" role="img" aria-label="Diagram after Figure 1.1 of the dissertation: three people sit behind a meeting table and a small robot sits at its right end, emitting sound waves towards them. A box marks one person (1, individual-level affect recognition), a dashed box encloses the three people (2, group-level affect recognition), and a dashed box marks the robot (3, affect synthesis).">
 {''.join(out)}
 </svg>
 <figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
@@ -444,7 +439,7 @@ def conversion_svg():
     # arousal control on the emotion embedding
     sy = 214
     out.append(f'<g class="ctl"><line x1="{px0 + 8}" x2="{px1 - 8}" y1="{sy}" y2="{sy}"/>'
-               f'<circle cx="{px1 - 24}" cy="{sy}" r="4.5"/>'
+               f'<circle cx="{px1 - 8}" cy="{sy}" r="4.5"/>'
                f'<text x="{px0 + 8}" y="{sy + 16}">Low</text><text x="{px1 - 8}" y="{sy + 16}" text-anchor="end">High</text>'
                f'<text class="lbl-accent" x="{(px0 + px1) / 2}" y="{sy - 9}" text-anchor="middle">Arousal</text></g>')
     # merge into the decoder
@@ -455,10 +450,11 @@ def conversion_svg():
                f'<text x="311" y="{mid + 4}" text-anchor="middle">Decoder</text></g>')
     out.append(f'<path class="flow" d="M350,{mid}H370" marker-end="url(#ah)"/>')
     # converted speech: same sentence, higher and faster
-    out.append(wave(380, 15, 4.2, 34, "out"))
+    out.append(wave(380.5, 15, 4.2, 34, "out out-high"))
+    out.append(wave(371.5, 15, 5.4, 22, "out out-low"))
     out.append(f'<text class="lbl" x="410" y="{mid + 44}" text-anchor="middle">Converted speech</text>')
     return f"""<figure class="dist pipe" aria-labelledby="conv-cap">
-<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pipeline diagram. Input speech is split into speaker, content and emotion embeddings. An arousal control changes only the emotion embedding, set towards high. A decoder turns the three embeddings back into converted speech, drawn with a denser, taller waveform.">
+<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pipeline diagram. Input speech is split into speaker, content and emotion embeddings. An arousal control changes only the emotion embedding. A decoder turns the three embeddings back into converted speech; as the control moves between low and high, the output waveform changes with it.">
   <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0.5L7.5,4L0,7.5Z"/></marker></defs>
   {''.join(out)}
 </svg>
