@@ -359,7 +359,7 @@ def dist_svg():
   <text class="lbl" x="{x0}" y="{H - 2}">Low arousal</text>
   <text class="lbl" x="{x1}" y="{H - 2}" text-anchor="end">High arousal</text>
 </svg>
-<figcaption id="dist-cap">Six people rate the arousal of one utterance and disagree. The models learn the whole distribution of ratings, not only its mean.</figcaption>
+<figcaption id="dist-cap">People disagree about the emotion in a voice. The models learn that disagreement instead of averaging it away.</figcaption>
 </figure>"""
 
 
@@ -458,7 +458,7 @@ def conversion_svg():
   <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0.5L7.5,4L0,7.5Z"/></marker></defs>
   {''.join(out)}
 </svg>
-<figcaption id="conv-cap">Speech is split into speaker, content and emotion embeddings. Only the emotion embedding is changed, here towards higher arousal, and a decoder resynthesises the same sentence with the new tone. No parallel recordings are needed.</figcaption>
+<figcaption id="conv-cap">Who is speaking and what is said stay the same; only how it is said changes. The same sentence is re-spoken with a different emotion.</figcaption>
 </figure>"""
 
 
