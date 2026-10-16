@@ -370,40 +370,58 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 @media (max-width: 520px) { .thesis-facts > div { grid-template-columns: minmax(0, 1fr); } }
 .section .dist { margin: 1.75rem 0 2.25rem; }
 
-/* ---------- Dissertation figure (redrawn Figure 1.1) ---------- */
+/* ---------- Dissertation overview and column charts ---------- */
 .thesis > p, .thesis .thesis-title { max-width: var(--measure); }
 .thesis .thesis-title { max-width: 26ch; }
-.thesis-intro { margin-bottom: 1.5rem; }
-.thesis-fig { margin: 0 0 1.75rem; max-width: 46rem; }
-.thesis-fig svg { display: block; width: 100%; height: auto; }
-.thesis-fig .art { fill: var(--ink); opacity: 0.86; }
-.thesis-fig .art-accent { fill: var(--accent); }
-.thesis-fig .cbox { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 3.5; stroke-dasharray: 16 11; }
-.thesis-fig .cbox-1 { fill: var(--accent-wash); }
-.thesis-fig .cbadge circle { fill: var(--accent); }
-.thesis-fig .cbadge text { fill: var(--accent-ink); font-family: var(--sans); font-weight: 650; font-size: 46px; }
-.thesis-fig figcaption { font-size: var(--t-sm); color: var(--muted); margin-top: 0.9rem; max-width: 58ch; line-height: 1.5; }
+.thesis-intro { margin-bottom: 1.25rem; }
+
+.scene { margin: 0 0 0.5rem; max-width: 46rem; }
+.scene svg { display: block; width: 100%; height: auto; overflow: visible; }
+.scene .person circle, .scene .person path, .scene .agent rect, .scene .agent path {
+  fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82;
+}
+.scene .agent .eye { fill: var(--ink); stroke: none; opacity: 0.82; }
+.scene .agent .visor { stroke-width: 1.3; }
+.scene .table { fill: var(--panel); stroke: var(--annot); stroke-width: 1.3; }
+.scene .zone { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
+.scene .zone-1 { stroke-dasharray: none; stroke-width: 1.6; }
+.scene .waves path, .scene .cue polyline { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.scene .cue line { stroke: var(--accent); stroke-width: 1; opacity: 0.5; }
+.scene .cue path { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
+.scene .cue circle { fill: var(--accent); }
+.scene .badge circle { fill: var(--accent); }
+.scene .badge text { fill: var(--accent-ink); font-family: var(--sans); font-size: 12px; font-weight: 650; }
+.scene figcaption { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin-top: 0.4rem; font-family: var(--sans); font-size: var(--t-xs); color: var(--muted); }
+.scene .key { display: inline-flex; align-items: center; gap: 0.45rem; }
+.scene .key b {
+  width: 1.15rem; height: 1.15rem; border-radius: 50%; display: inline-grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-size: 0.7rem; font-weight: 650;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .thesis-fig.armed .cbox, .thesis-fig.armed .cbadge, .thesis-fig.armed .art-accent { opacity: 0; }
-  .thesis-fig.play .cbox, .thesis-fig.play .cbadge, .thesis-fig.play .art-accent { animation: fade 0.55s ease-out forwards; }
-  .thesis-fig.play .cbox-1, .thesis-fig.play .cbadge-1 { animation-delay: 0.15s; }
-  .thesis-fig.play .art-accent { animation-delay: 0.35s; }
-  .thesis-fig.play .cbox-2, .thesis-fig.play .cbadge-2 { animation-delay: 0.65s; }
-  .thesis-fig.play .cbox-3, .thesis-fig.play .cbadge-3 { animation-delay: 1.15s; }
+  .scene.armed .zone, .scene.armed .badge, .scene.armed .cue, .scene.armed .waves { opacity: 0; }
+  .scene.play .zone, .scene.play .badge, .scene.play .cue, .scene.play .waves { animation: fade 0.5s ease-out forwards; }
+  .scene.play .zone-1, .scene.play .badge-1, .scene.play .cue-1 { animation-delay: 0.1s; }
+  .scene.play .zone-2, .scene.play .badge-2, .scene.play .cue-2 { animation-delay: 0.55s; }
+  .scene.play .zone-3, .scene.play .badge-3, .scene.play .waves { animation-delay: 1s; }
 }
 
-.contribs { list-style: none; margin: 0 0 0.5rem; padding: 0; max-width: var(--measure); border-top: 1px solid var(--rule); }
-.contribs li { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0 0.9rem; padding: 0.9rem 0; border-bottom: 1px solid var(--rule); }
-.contribs .num {
-  width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
-  display: grid; place-items: center; font-family: var(--sans); font-size: 0.8rem; font-weight: 650; margin-top: 0.1rem;
+.strand .dist { margin: 0 0 0.5rem; max-width: none; }
+.strand .dist figcaption { font-size: var(--t-xs); max-width: none; margin-top: 0.5rem; }
+.conv .pc { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.conv .pc-input { stroke: var(--muted); stroke-dasharray: 3 4; stroke-width: 1.3; }
+.conv .pc-low { stroke: var(--annot); }
+.conv .pc-high { stroke: var(--accent); stroke-width: 2.4; }
+.conv .end { stroke: var(--rule); stroke-width: 1; }
+.conv .pl { font-family: var(--sans); font-size: 11.5px; fill: var(--muted); }
+.conv .pl-high { fill: var(--accent); font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) {
+  .conv.play .pc { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.6,.05,.25,1) forwards; }
+  .conv.play .pc-input { animation: fade 0.5s ease-out forwards; opacity: 0; stroke-dasharray: 3 4; stroke-dashoffset: 0; }
+  .conv.play .pc-low { animation-delay: 0.4s; }
+  .conv.play .pc-high { animation-delay: 0.8s; }
+  .conv.play .pl { opacity: 0; animation: fade 0.4s ease-out 1.6s forwards; }
 }
-.contribs p { margin: 0; }
-.contribs .c-title { font-family: var(--sans); font-weight: 600; font-size: var(--t-base); }
-.contribs .c-desc { font-size: var(--t-sm); color: var(--muted); margin-top: 0.15rem; }
-.contribs .c-links { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; margin-top: 0.35rem; font-family: var(--sans); font-size: var(--t-xs); }
-.contribs .dist { margin: 1rem 0 0.25rem; max-width: 26rem; }
-.contribs .dist figcaption { font-size: var(--t-xs); max-width: 44ch; }
+
 .news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }
 .news-photo img { display: block; width: 100%; height: auto; border-radius: 4px; background: var(--panel); }
 .news-photo a:hover img { opacity: 0.92; }

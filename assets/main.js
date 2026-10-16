@@ -35,36 +35,23 @@
     if (mq.addEventListener) mq.addEventListener("change", onChange);
   }
 
-  /* ---------- Hero figure: play once ---------- */
-  var fig = document.querySelector(".dist");
-  if (fig) {
-    var agg = fig.querySelector(".agg");
-    if (agg && agg.getTotalLength) {
-      agg.style.setProperty("--len", Math.ceil(agg.getTotalLength()));
-    }
-    if ("IntersectionObserver" in window) {
-      var dio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) { fig.classList.add("play"); dio.disconnect(); }
-        });
-      }, { threshold: 0.5 });
-      dio.observe(fig);
-    } else {
-      fig.classList.add("play");
-    }
-  }
-
-  /* ---------- Dissertation figure: reveal once when scrolled into view ---------- */
-  var tfig = document.querySelector(".thesis-fig");
-  if (tfig && "IntersectionObserver" in window) {
-    tfig.classList.add("armed");
+  /* ---------- Figures: play their one-time animation when scrolled into view ---------- */
+  function playOnView(el, threshold) {
+    if (!("IntersectionObserver" in window)) { el.classList.add("play"); return; }
+    el.classList.add("armed");
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { tfig.classList.add("play"); io.disconnect(); }
+        if (e.isIntersecting) { el.classList.add("play"); io.disconnect(); }
       });
-    }, { threshold: 0.35 });
-    io.observe(tfig);
+    }, { threshold: threshold });
+    io.observe(el);
   }
+  document.querySelectorAll(".dist").forEach(function (fig) {
+    var agg = fig.querySelector(".agg");
+    if (agg && agg.getTotalLength) agg.style.setProperty("--len", Math.ceil(agg.getTotalLength()));
+    playOnView(fig, 0.5);
+  });
+  document.querySelectorAll(".scene").forEach(function (fig) { playOnView(fig, 0.35); });
 
   /* ---------- Publications: filters ---------- */
   var chips = document.querySelectorAll(".chip[data-filter]");

@@ -359,40 +359,104 @@ def dist_svg():
   <text class="lbl" x="{x0}" y="{H - 2}">Low arousal</text>
   <text class="lbl" x="{x1}" y="{H - 2}" text-anchor="end">High arousal</text>
 </svg>
-<figcaption id="dist-cap">Six people rate the arousal of the same utterance and disagree. The models learn the whole distribution of their ratings, not only its mean.</figcaption>
+<figcaption id="dist-cap">Six people rate the arousal of one utterance and disagree. The models learn the whole distribution of ratings, not only its mean.</figcaption>
 </figure>"""
 
 
 
-def thesis_fig():
-    """Figure 1.1 of the dissertation, traced from the original artwork and restyled for the site."""
-    ink = open(os.path.join(HERE, "figure", "ink_path.txt")).read()
-    acc = open(os.path.join(HERE, "figure", "acc_path.txt")).read()
-    boxes = [  # (number, x0, y0, x1, y1, label)
-        (2, 56, 256, 1800, 767, "Group-level affect recognition"),
-        (1, 782, 301, 1191, 723, "Individual-level affect recognition"),
-        (3, 1938, 256, 2420, 767, "Affect synthesis"),
-    ]
-    rects, badges = "", ""
-    for n, x0, y0, x1, y1, label in boxes:
-        rects += f'<rect class="cbox cbox-{n}" x="{x0}" y="{y0}" width="{x1-x0}" height="{y1-y0}" rx="22"/>'
-        cx, cy = x0 + 52, y0
-        badges += (f'<g class="cbadge cbadge-{n}"><circle cx="{cx}" cy="{cy}" r="42"/>'
-                   f'<text x="{cx}" y="{cy + 16}" text-anchor="middle">{n}</text></g>')
-    return f"""<figure class="thesis-fig" aria-labelledby="thesis-fig-cap">
-<svg viewBox="30 210 2420 1120" role="img" aria-label="Line drawing of four people in a meeting around a table with a social robot. Dashed boxes mark (1) one person's face for individual-level affect recognition, (2) the whole group for group-level affect recognition, and (3) the robot for affect synthesis.">
-  <g class="cboxes">{rects}</g>
-  <path class="art" fill-rule="evenodd" d="{ink}"/>
-  <path class="art-accent" fill-rule="evenodd" d="{acc}"/>
-  {badges}
+def scene_svg():
+    """Dissertation overview, drawn from scratch: a meeting with four people and a social agent.
+    (1) one person's affect, (2) the group's affect, (3) the agent expressing affect in speech."""
+    W, H = 720, 330
+    people = [168, 270, 380, 482]
+    head_y, shoulder_y = 150, 180
+    out = []
+    # (2) group: dashed hull around all four people
+    out.append('<rect class="zone zone-2" x="112" y="78" width="428" height="160" rx="28"/>')
+    # (1) individual: dashed ring around one head
+    out.append(f'<circle class="zone zone-1" cx="{people[1]}" cy="{head_y}" r="31"/>')
+    # (3) agent zone
+    out.append('<rect class="zone zone-3" x="572" y="78" width="124" height="160" rx="24"/>')
+    # people as simple busts
+    for i, x in enumerate(people):
+        cls = "person is-focus" if i == 1 else "person"
+        out.append(f'<g class="{cls}"><circle cx="{x}" cy="{head_y}" r="19"/>'
+                   f'<path d="M{x-38} 262 C{x-38} {shoulder_y+8} {x-24} {shoulder_y} {x} {shoulder_y} S{x+38} {shoulder_y+8} {x+38} 262"/></g>')
+    # agent: rounded head, eyes, body; sound waves toward the group
+    out.append('<g class="agent"><rect x="606" y="122" width="56" height="52" rx="20"/>'
+               '<rect class="visor" x="616" y="139" width="36" height="14" rx="7"/>'
+               '<circle class="eye" cx="627" cy="146" r="2.6"/><circle class="eye" cx="641" cy="146" r="2.6"/>'
+               '<path d="M596 262 C596 202 610 188 634 188 S672 202 672 262"/></g>')
+    out.append('<g class="waves"><path d="M590 136 Q582 148 590 160"/><path d="M579 128 Q567 148 579 168"/><path d="M568 120 Q552 148 568 176"/></g>')
+    # (1) cue: a tiny label distribution above the focused person
+    cx = people[1]
+    pts = " ".join(f"{cx - 34 + i * 68 / 40:.1f},{108 - 22 * math.exp(-0.5 * ((i - 20) / 7) ** 2):.1f}" for i in range(41))
+    out.append(f'<g class="cue cue-1"><polyline points="{pts}"/><line x1="{cx-34}" y1="108" x2="{cx+34}" y2="108"/></g>')
+    # (2) cue: three members' affect traces converging over time, top right of the group zone
+    tr = []
+    for y0 in (90, 104, 118):
+        tr.append(f'<path d="M392 {y0} C430 {y0} 450 {104 + (y0 - 104) * 0.25:.1f} 486 104 L516 104"/>')
+    out.append(f'<g class="cue cue-2">{"".join(tr)}<circle cx="516" cy="104" r="3"/></g>')
+    # table, drawn last so it hides the lower bodies
+    out.append('<ellipse class="table" cx="384" cy="282" rx="296" ry="34"/>')
+    # number badges
+    for n, (bx, by) in {1: (people[1] + 22, head_y - 22), 2: (112, 78), 3: (572, 78)}.items():
+        out.append(f'<g class="badge badge-{n}"><circle cx="{bx}" cy="{by}" r="12"/><text x="{bx}" y="{by + 4.5}" text-anchor="middle">{n}</text></g>')
+    return f"""<figure class="scene" aria-labelledby="scene-cap">
+<svg viewBox="84 62 628 260" role="img" aria-label="Diagram of four people around a table with a social agent. A ring marks one person (1, individual-level affect recognition), a dashed area marks the whole group (2, group-level affect recognition), and the agent speaks with sound waves (3, affect synthesis).">
+{''.join(out)}
 </svg>
-<figcaption id="thesis-fig-cap">Figure 1.1 of the dissertation, redrawn. For a system to take part in a meeting like this, it has to read each person's affect, read the mood of the group as a whole, and express affect itself.</figcaption>
-</figure>
-<ol class="contribs">
-  <li><span class="num" aria-hidden="true">1</span><div><p class="c-title">Individual-level affect recognition</p><p class="c-desc">Treating disagreement between annotators as information, with Bayesian neural networks and Student's t-distributions.</p><p class="c-links"><a href="publications.html#bnn-arousal-interspeech-2022">Interspeech 2022</a><a href="publications.html#t-dist-acii-2022">ACII 2022</a><a href="publications.html#bnn-ldl-taffc-2023">IEEE TAFFC 2023</a></p>{dist_svg()}</div></li>
-  <li><span class="num" aria-hidden="true">2</span><div><p class="c-title">Group-level affect recognition</p><p class="c-desc">Annotating group affect over time and modelling how a group's mood converges and diverges.</p><p class="c-links"><a href="publications.html#behavioral-labels-oup-2025">Oxford University Press 2025</a><a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></p></div></li>
-  <li><span class="num" aria-hidden="true">3</span><div><p class="c-title">Affect synthesis</p><p class="c-desc">Converting the emotion of in-the-wild speech without parallel data, with vocoders, diffusion and duration modelling.</p><p class="c-links"><a href="publications.html#ssl-sec-itg-2023">ITG 2023</a><a href="publications.html#emoconv-diff-icassp-2024">ICASSP 2024</a><a href="publications.html#duration-asru-2025">IEEE ASRU 2025</a></p></div></li>
-</ol>"""
+<figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
+</figure>"""
+
+
+def conversion_svg():
+    """Illustration of speech emotion conversion: pitch contours of one sentence at three arousal levels."""
+    W, H = 460, 250
+    x0, x1 = 24, W - 96
+    base = H - 46
+    T = 1.25  # seconds shown on the axis
+    def X(t): return x0 + t / T * (x1 - x0)
+    # voiced segments (start, end) in normalised time, shared by all versions
+    segs = [(0.02, 0.17), (0.22, 0.41), (0.47, 0.63), (0.69, 0.86), (0.90, 0.99)]
+    versions = [  # class, total duration (s), mean height, variability, label
+        ("low", 1.22, 0.24, 0.05, "Low arousal"),
+        ("input", 1.00, 0.46, 0.09, "Input"),
+        ("high", 0.80, 0.72, 0.16, "High arousal"),
+    ]
+    paths, labels = [], []
+    for cls, dur, mean, var, label in versions:
+        d = []
+        for a, b in segs:
+            n = 14
+            pts = []
+            for i in range(n + 1):
+                u = a + (b - a) * i / n
+                y = mean + var * (math.sin(u * 8.0 + 0.6) + 0.35 * math.sin(u * 21.0 + 1.3)) - 0.05 * ((i / n) - 0.5) ** 2 * 4
+                pts.append((X(u * dur), base - 150 * y))
+            d.append("M" + " L".join(f"{px:.1f},{py:.1f}" for px, py in pts))
+        paths.append(f'<path class="pc pc-{cls}" pathLength="1" d="{" ".join(d)}"/>')
+        ex, ey = X(0.99 * dur), base - 150 * (mean + var * 0.2)
+        labels.append((cls, label, ex, ey))
+    end_marks = "".join(f'<line class="end end-{c}" x1="{X(d):.1f}" x2="{X(d):.1f}" y1="{base}" y2="{base + 6}"/>' for c, d, *_ in versions)
+    lbl = []
+    for cls, label, ex, ey in labels:
+        anchor_x = ex + 8
+        lbl.append(f'<text class="pl pl-{cls}" x="{anchor_x:.1f}" y="{ey + 4:.1f}">{E(label)}</text>')
+    ticks = "".join(f'<text class="tick" x="{X(t):.1f}" y="{base + 22}" text-anchor="middle">{t:.1f} s</text>' for t in (0, 0.4, 0.8, 1.2))
+    return f"""<figure class="dist conv" aria-labelledby="conv-cap">
+<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pitch contours of one sentence at three arousal levels. The high-arousal version is higher, more varied and ends sooner; the low-arousal version is lower, flatter and takes longer.">
+  <line class="axis" x1="{x0}" x2="{X(T):.1f}" y1="{base}" y2="{base}"/>
+  {end_marks}
+  {"".join(paths)}
+  {"".join(lbl)}
+  {ticks}
+  <text class="lbl" x="{x0}" y="{H - 2}">Time</text>
+  <text class="lbl" x="{x0}" y="16">Pitch</text>
+</svg>
+<figcaption id="conv-cap">One sentence, three arousal levels. Converted speech rises in pitch and speeds up when excited, and drops and slows down when calm. Illustrative contours.</figcaption>
+</figure>"""
+
 
 # ---------------------------------------------------------------- pages
 def index_page():
@@ -432,8 +496,28 @@ def index_page():
       <div><dt>Supervisors</dt><dd>Prof. Timo Gerkmann<br>Prof. Nale Lehmann-Willenbrock</dd></div>
       <div><dt>External reviewer</dt><dd>Prof. Carlos Busso</dd></div>
     </dl>
-    <p class="thesis-intro">Current AI systems still lack social intelligence: the ability to perceive and express the social signals that make collaboration work. The dissertation focuses on affect, and studies it in three settings.</p>
-    {thesis_fig()}
+    <p class="thesis-intro">Current AI systems still lack social intelligence: the ability to perceive and express the social signals that make collaboration work. The dissertation focuses on affect and studies it at three levels, in two lines of work.</p>
+    {scene_svg()}
+    <div class="strands">
+      <div class="strand">
+        <h3>Recognising affect</h3>
+        {dist_svg()}
+        <ol>
+          <li>Bayesian neural networks trained on the full distribution of annotations, so models capture annotator disagreement as well as the mean.<a href="publications.html#bnn-arousal-interspeech-2022">Interspeech 2022, IEEE TAFFC 2023</a></li>
+          <li>Student's t-distributions in place of Gaussians, linking how few annotations exist to how uncertain a label is.<a href="publications.html#t-dist-acii-2022">ACII 2022</a></li>
+          <li>A psychology-grounded protocol for annotating group affect over time, and multimodal models of how groups converge and diverge.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></li>
+        </ol>
+      </div>
+      <div class="strand">
+        <h3>Synthesising affect in speech</h3>
+        {conversion_svg()}
+        <ol>
+          <li>Emotion conversion without parallel data, by disentangling speaker, lexical and emotion embeddings and resynthesising with a HiFiGAN vocoder.<a href="publications.html#ssl-sec-itg-2023">ITG Speech Communication 2023</a></li>
+          <li>Diffusion decoders that widen the range of emotions that can be expressed, especially rare, extreme arousal.<a href="publications.html#emoconv-diff-icassp-2024">ICASSP 2024</a></li>
+          <li>A duration predictor that lets speech rate follow arousal: slower when calm, faster when excited.<a href="publications.html#duration-asru-2025">IEEE ASRU 2025</a></li>
+        </ol>
+      </div>
+    </div>
     <div class="actions">
       <a class="btn primary" href="{LINKS['thesis']}">Read the dissertation</a>
       <a class="btn" href="{LINKS['thesis_news']}">Department news</a>
