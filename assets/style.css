@@ -375,22 +375,20 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .thesis .thesis-title { max-width: 26ch; }
 .thesis-intro { margin-bottom: 1.25rem; }
 
-.scene { margin: 0 0 0.5rem; max-width: 46rem; }
-.scene svg { display: block; width: 100%; height: auto; overflow: visible; }
-.scene .person circle, .scene .person path, .scene .agent rect, .scene .agent path {
+.scene { margin: 0 0 0.5rem; }
+.scene svg { display: block; width: 100%; max-width: 33rem; height: auto; overflow: visible; }
+.scene .person .head, .scene .person .shoulders, .scene .agent rect, .scene .agent circle {
   fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82;
 }
-.scene .agent .eye { fill: var(--ink); stroke: none; opacity: 0.82; }
-.scene .agent .visor { stroke-width: 1.3; }
+.scene .agent .dot { fill: var(--ink); stroke: none; opacity: 0.82; }
+.scene .speech { fill: none; stroke: var(--annot); stroke-width: 1.8; stroke-linecap: round; }
+.scene .is-focus .speech { stroke: var(--accent); }
 .scene .table { fill: var(--panel); stroke: var(--annot); stroke-width: 1.3; }
 .scene .zone { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
-.scene .zone-1 { stroke-dasharray: none; stroke-width: 1.6; }
-.scene .waves path, .scene .cue polyline { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.scene .cue line { stroke: var(--accent); stroke-width: 1; opacity: 0.5; }
-.scene .cue path { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
-.scene .cue circle { fill: var(--accent); }
+.scene .zone-1 { fill: none; stroke-dasharray: none; stroke-width: 1.6; }
+.scene .waves path { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
 .scene .badge circle { fill: var(--accent); }
-.scene .badge text { fill: var(--accent-ink); font-family: var(--sans); font-size: 12px; font-weight: 650; }
+.scene .badge text { fill: var(--accent-ink); font-family: var(--sans); font-size: 13px; font-weight: 650; }
 .scene figcaption { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin-top: 0.4rem; font-family: var(--sans); font-size: var(--t-xs); color: var(--muted); }
 .scene .key { display: inline-flex; align-items: center; gap: 0.45rem; }
 .scene .key b {
@@ -398,20 +396,22 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   background: var(--accent); color: var(--accent-ink); font-size: 0.7rem; font-weight: 650;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .scene.armed .zone, .scene.armed .badge, .scene.armed .cue, .scene.armed .waves { opacity: 0; }
-  .scene.play .zone, .scene.play .badge, .scene.play .cue, .scene.play .waves { animation: fade 0.5s ease-out forwards; }
-  .scene.play .zone-1, .scene.play .badge-1, .scene.play .cue-1 { animation-delay: 0.1s; }
-  .scene.play .zone-2, .scene.play .badge-2, .scene.play .cue-2 { animation-delay: 0.55s; }
+  .scene.armed .zone, .scene.armed .badge, .scene.armed .waves { opacity: 0; }
+  .scene.play .zone, .scene.play .badge, .scene.play .waves { animation: fade 0.5s ease-out forwards; }
+  .scene.play .zone-1, .scene.play .badge-1 { animation-delay: 0.1s; }
+  .scene.play .zone-2, .scene.play .badge-2 { animation-delay: 0.55s; }
   .scene.play .zone-3, .scene.play .badge-3, .scene.play .waves { animation-delay: 1s; }
 }
 
 .strand .dist { margin: 0 0 0.5rem; max-width: none; }
 .strand .dist figcaption { font-size: var(--t-xs); max-width: none; margin-top: 0.5rem; }
 .conv .pc { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.conv .pc-input { stroke: var(--muted); stroke-dasharray: 3 4; stroke-width: 1.3; }
+.conv .pc-input { stroke: var(--muted); stroke-dasharray: 3 4; stroke-width: 1.4; }
 .conv .pc-low { stroke: var(--annot); }
 .conv .pc-high { stroke: var(--accent); stroke-width: 2.4; }
-.conv .end { stroke: var(--rule); stroke-width: 1; }
+.conv .row, .conv .yaxis { stroke: var(--rule); stroke-width: 1; }
+.conv .end { stroke: var(--annot); stroke-width: 1.2; }
+.conv .end-high { stroke: var(--accent); }
 .conv .pl { font-family: var(--sans); font-size: 11.5px; fill: var(--muted); }
 .conv .pl-high { fill: var(--accent); font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) {
@@ -419,7 +419,7 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   .conv.play .pc-input { animation: fade 0.5s ease-out forwards; opacity: 0; stroke-dasharray: 3 4; stroke-dashoffset: 0; }
   .conv.play .pc-low { animation-delay: 0.4s; }
   .conv.play .pc-high { animation-delay: 0.8s; }
-  .conv.play .pl { opacity: 0; animation: fade 0.4s ease-out 1.6s forwards; }
+  .conv.play .end-high { opacity: 0; animation: fade 0.6s ease-out 1.7s forwards; }
 }
 
 .news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }

@@ -365,45 +365,48 @@ def dist_svg():
 
 
 def scene_svg():
-    """Dissertation overview, drawn from scratch: a meeting with four people and a social agent.
+    """Dissertation overview, drawn from scratch as a top-down view of a meeting.
+    Four people sit around a round table and a social agent sits just outside the group.
     (1) one person's affect, (2) the group's affect, (3) the agent expressing affect in speech."""
-    W, H = 720, 330
-    people = [168, 270, 380, 482]
-    head_y, shoulder_y = 150, 180
+    cx, cy = 205, 150          # table centre
+    table_r, seat_r = 52, 98
+    seats = [100, 160, 220, 280]   # degrees, clockwise from the right; the open side faces the agent
+    focus = 2                      # index into seats
+    ax, ay, zone3_r = 440, 150, 50  # agent centre and its zone radius
+    zone2_r = 126
     out = []
-    # (2) group: dashed hull around all four people
-    out.append('<rect class="zone zone-2" x="112" y="78" width="428" height="160" rx="28"/>')
-    # (1) individual: dashed ring around one head
-    out.append(f'<circle class="zone zone-1" cx="{people[1]}" cy="{head_y}" r="31"/>')
-    # (3) agent zone
-    out.append('<rect class="zone zone-3" x="572" y="78" width="124" height="160" rx="24"/>')
-    # people as simple busts
-    for i, x in enumerate(people):
-        cls = "person is-focus" if i == 1 else "person"
-        out.append(f'<g class="{cls}"><circle cx="{x}" cy="{head_y}" r="19"/>'
-                   f'<path d="M{x-38} 262 C{x-38} {shoulder_y+8} {x-24} {shoulder_y} {x} {shoulder_y} S{x+38} {shoulder_y+8} {x+38} 262"/></g>')
-    # agent: rounded head, eyes, body; sound waves toward the group
-    out.append('<g class="agent"><rect x="606" y="122" width="56" height="52" rx="20"/>'
-               '<rect class="visor" x="616" y="139" width="36" height="14" rx="7"/>'
-               '<circle class="eye" cx="627" cy="146" r="2.6"/><circle class="eye" cx="641" cy="146" r="2.6"/>'
-               '<path d="M596 262 C596 202 610 188 634 188 S672 202 672 262"/></g>')
-    out.append('<g class="waves"><path d="M590 136 Q582 148 590 160"/><path d="M579 128 Q567 148 579 168"/><path d="M568 120 Q552 148 568 176"/></g>')
-    # (1) cue: a tiny label distribution above the focused person
-    cx = people[1]
-    pts = " ".join(f"{cx - 34 + i * 68 / 40:.1f},{108 - 22 * math.exp(-0.5 * ((i - 20) / 7) ** 2):.1f}" for i in range(41))
-    out.append(f'<g class="cue cue-1"><polyline points="{pts}"/><line x1="{cx-34}" y1="108" x2="{cx+34}" y2="108"/></g>')
-    # (2) cue: three members' affect traces converging over time, top right of the group zone
-    tr = []
-    for y0 in (90, 104, 118):
-        tr.append(f'<path d="M392 {y0} C430 {y0} 450 {104 + (y0 - 104) * 0.25:.1f} 486 104 L516 104"/>')
-    out.append(f'<g class="cue cue-2">{"".join(tr)}<circle cx="516" cy="104" r="3"/></g>')
-    # table, drawn last so it hides the lower bodies
-    out.append('<ellipse class="table" cx="384" cy="282" rx="296" ry="34"/>')
+    # (2) group zone, then the table on top of it
+    out.append(f'<circle class="zone zone-2" cx="{cx}" cy="{cy}" r="{zone2_r}"/>')
+    out.append(f'<circle class="table" cx="{cx}" cy="{cy}" r="{table_r}"/>')
+    # people seen from above: head, shoulders behind it, and a short speech waveform towards the table
+    for i, deg in enumerate(seats):
+        a = math.radians(deg)
+        px, py = cx + seat_r * math.cos(a), cy + seat_r * math.sin(a)
+        cls = "person is-focus" if i == focus else "person"
+        out.append(f'<g class="{cls}" transform="translate({px:.1f},{py:.1f}) rotate({deg})">'
+                   '<path class="speech" d="M-22,-3v6M-27,-7v14M-32,-10v20M-37,-5v10M-42,-3v6"/>'
+                   '<path class="shoulders" d="M4.9,-19A21,21 0 0 1 4.9,19"/>'
+                   '<circle class="head" r="11"/></g>')
+        if i == focus:  # ring centre sits a little towards the table so the ring also holds the speech
+            fx, fy = px - 10 * math.cos(a), py - 10 * math.sin(a)
+    # (1) individual: a solid ring around one person and what they say
+    out.append(f'<circle class="zone zone-1" cx="{fx:.1f}" cy="{fy:.1f}" r="37"/>')
+    # (3) agent: zone, a rounded device with a speaker, and sound arcs towards the table
+    out.append(f'<circle class="zone zone-3" cx="{ax}" cy="{ay}" r="{zone3_r}"/>')
+    out.append(f'<g class="agent"><rect x="{ax-19}" y="{ay-19}" width="38" height="38" rx="11"/>'
+               f'<circle cx="{ax}" cy="{ay}" r="8"/><circle class="dot" cx="{ax}" cy="{ay}" r="2.6"/></g>')
+    wx = ax - 20
+    arcs = []
+    for r in (16, 28, 40):
+        dy, dx = r * math.sin(math.radians(40)), r * math.cos(math.radians(40))
+        arcs.append(f'<path d="M{wx-dx:.1f},{ay-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{ay+dy:.1f}"/>')
+    out.append(f'<g class="waves">{"".join(arcs)}</g>')
     # number badges
-    for n, (bx, by) in {1: (people[1] + 22, head_y - 22), 2: (112, 78), 3: (572, 78)}.items():
-        out.append(f'<g class="badge badge-{n}"><circle cx="{bx}" cy="{by}" r="12"/><text x="{bx}" y="{by + 4.5}" text-anchor="middle">{n}</text></g>')
+    s = math.sqrt(0.5)
+    for n, (bx, by) in {1: (fx + 27, fy - 27), 2: (cx + zone2_r * s, cy - zone2_r * s), 3: (ax + zone3_r * s, ay - zone3_r * s)}.items():
+        out.append(f'<g class="badge badge-{n}"><circle cx="{bx:.1f}" cy="{by:.1f}" r="13"/><text x="{bx:.1f}" y="{by + 4.5:.1f}" text-anchor="middle">{n}</text></g>')
     return f"""<figure class="scene" aria-labelledby="scene-cap">
-<svg viewBox="84 62 628 260" role="img" aria-label="Diagram of four people around a table with a social agent. A ring marks one person (1, individual-level affect recognition), a dashed area marks the whole group (2, group-level affect recognition), and the agent speaks with sound waves (3, affect synthesis).">
+<svg viewBox="62 10 450 280" role="img" aria-label="Diagram of a meeting seen from above: four people around a round table and a social agent beside them. A ring marks one person (1, individual-level affect recognition), a dashed circle encloses the whole group (2, group-level affect recognition), and the agent emits sound waves towards the table (3, affect synthesis).">
 {''.join(out)}
 </svg>
 <figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
@@ -411,48 +414,46 @@ def scene_svg():
 
 
 def conversion_svg():
-    """Illustration of speech emotion conversion: pitch contours of one sentence at three arousal levels."""
-    W, H = 460, 250
-    x0, x1 = 24, W - 96
-    base = H - 46
-    T = 1.25  # seconds shown on the axis
+    """Illustration of speech emotion conversion: the pitch contour of one sentence at three arousal levels,
+    one row per level on a shared time axis. Higher arousal sits higher and ends sooner."""
+    W, H = 460, 252
+    x0, x1 = 112, W - 16
+    T = 1.3  # seconds shown on the axis
     def X(t): return x0 + t / T * (x1 - x0)
-    # voiced segments (start, end) in normalised time, shared by all versions
-    segs = [(0.02, 0.17), (0.22, 0.41), (0.47, 0.63), (0.69, 0.86), (0.90, 0.99)]
-    versions = [  # class, total duration (s), mean height, variability, label
-        ("low", 1.22, 0.24, 0.05, "Low arousal"),
-        ("input", 1.00, 0.46, 0.09, "Input"),
-        ("high", 0.80, 0.72, 0.16, "High arousal"),
+    segs = [(0.0, 0.2), (0.26, 0.5), (0.56, 0.74), (0.8, 1.0)]  # voiced stretches, normalised time
+    versions = [  # class, baseline y, duration (s), mean pitch, variability, label
+        ("high", 84, 0.82, 0.78, 0.2, "High arousal"),
+        ("input", 144, 1.0, 0.5, 0.11, "Input"),
+        ("low", 204, 1.2, 0.3, 0.055, "Low arousal"),
     ]
-    paths, labels = [], []
-    for cls, dur, mean, var, label in versions:
+    axis_y = 216
+    rows, paths, labels = [], [], []
+    for cls, base, dur, mean, var, label in versions:
         d = []
         for a, b in segs:
-            n = 14
+            n = 16
             pts = []
             for i in range(n + 1):
                 u = a + (b - a) * i / n
-                y = mean + var * (math.sin(u * 8.0 + 0.6) + 0.35 * math.sin(u * 21.0 + 1.3)) - 0.05 * ((i / n) - 0.5) ** 2 * 4
-                pts.append((X(u * dur), base - 150 * y))
-            d.append("M" + " L".join(f"{px:.1f},{py:.1f}" for px, py in pts))
+                p = mean + var * (math.sin(u * 7.0 + 0.4) + 0.4 * math.sin(u * 17.0 + 1.1)) - 0.12 * u * mean
+                pts.append((X(u * dur), base - 68 * p))
+            line = " L".join(f"{px:.1f},{py:.1f}" for px, py in pts)
+            d.append("M" + line)
         paths.append(f'<path class="pc pc-{cls}" pathLength="1" d="{" ".join(d)}"/>')
-        ex, ey = X(0.99 * dur), base - 150 * (mean + var * 0.2)
-        labels.append((cls, label, ex, ey))
-    end_marks = "".join(f'<line class="end end-{c}" x1="{X(d):.1f}" x2="{X(d):.1f}" y1="{base}" y2="{base + 6}"/>' for c, d, *_ in versions)
-    lbl = []
-    for cls, label, ex, ey in labels:
-        anchor_x = ex + 8
-        lbl.append(f'<text class="pl pl-{cls}" x="{anchor_x:.1f}" y="{ey + 4:.1f}">{E(label)}</text>')
-    ticks = "".join(f'<text class="tick" x="{X(t):.1f}" y="{base + 22}" text-anchor="middle">{t:.1f} s</text>' for t in (0, 0.4, 0.8, 1.2))
+        rows.append(f'<line class="row" x1="{x0}" x2="{X(dur):.1f}" y1="{base}" y2="{base}"/>'
+                    f'<line class="end end-{cls}" x1="{X(dur):.1f}" x2="{X(dur):.1f}" y1="{base - 5}" y2="{base + 5}"/>')
+        labels.append(f'<text class="pl pl-{cls}" x="{x0 - 12}" y="{base - 2}" text-anchor="end">{E(label)}</text>')
+    ticks = "".join(f'<text class="tick" x="{X(t):.1f}" y="{axis_y + 18}" text-anchor="middle">{t:.1f} s</text>' for t in (0, 0.4, 0.8, 1.2))
     return f"""<figure class="dist conv" aria-labelledby="conv-cap">
-<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pitch contours of one sentence at three arousal levels. The high-arousal version is higher, more varied and ends sooner; the low-arousal version is lower, flatter and takes longer.">
-  <line class="axis" x1="{x0}" x2="{X(T):.1f}" y1="{base}" y2="{base}"/>
-  {end_marks}
+<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pitch contours of one sentence at three arousal levels, one row each. The high-arousal version is higher, more varied and ends sooner; the low-arousal version is lower, flatter and takes longer.">
+  <line class="yaxis" x1="{x0}" x2="{x0}" y1="14" y2="{axis_y}"/>
+  <text class="lbl" x="{x0 - 12}" y="18" text-anchor="end">Pitch</text>
+  {"".join(rows)}
   {"".join(paths)}
-  {"".join(lbl)}
+  {"".join(labels)}
+  <line class="axis" x1="{x0}" x2="{X(T):.1f}" y1="{axis_y}" y2="{axis_y}"/>
   {ticks}
   <text class="lbl" x="{x0}" y="{H - 2}">Time</text>
-  <text class="lbl" x="{x0}" y="16">Pitch</text>
 </svg>
 <figcaption id="conv-cap">One sentence, three arousal levels. Converted speech rises in pitch and speeds up when excited, and drops and slows down when calm. Illustrative contours.</figcaption>
 </figure>"""
