@@ -261,7 +261,7 @@ def page(title, desc, current, body, path):
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-head">
   <div class="inner">
-    <a class="wordmark" href="index.html"><span class="full">Navin Raj Prabhu</span><span class="short">N. R. Prabhu</span></a>
+    <a class="wordmark" href="index.html"><span class="full">Navin Raj Prabhu</span><span class="short">N. Raj Prabhu</span></a>
     <nav class="site-nav" aria-label="Main">{nav_html}</nav>
     <button class="theme-toggle" type="button" aria-label="Switch to dark mode">{ICON_SUN}{ICON_MOON}</button>
   </div>
