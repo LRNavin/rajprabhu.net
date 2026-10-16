@@ -6,7 +6,7 @@ Personal research website of Navin Raj Prabhu, served by GitHub Pages from the `
 
 - `index.html`, `publications.html`, `cv.html`, `404.html`: generated pages (do not edit by hand)
 - `scripts/build.py`: page templates and all content (publications, news, CV)
-- `scripts/figure/`: vector paths for the redrawn Figure 1.1 of the dissertation
+- `scripts/figure/`: vector paths for the redrawn Figure 1.1 of the dissertation, and the script that traces them
 - `assets/`: stylesheet, script, fonts (self-hosted) and images
 
 ## Making a change
@@ -19,3 +19,5 @@ git add -A && git commit -m "Describe the change" && git push
 ```
 
 Python 3.8+ with the standard library is all the build needs.
+
+See [AGENTS.md](AGENTS.md) for content conventions, design rules and hosting details before making changes.
