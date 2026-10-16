@@ -154,7 +154,7 @@ THESIS = dict(
 NEWS = [
     ("2026-02", "Feb 2026",
      'Defended my PhD at the University of Hamburg: <a href="publications.html#dissertation-2026"><em>Probabilistic and Generative Modeling for Emotion Recognition and Synthesis</em></a>. '
-     'Thank you to Carlos Busso for serving as external reviewer, and to Frank Steinicke and Stefan Wermter on the committee.'
+     'Thank you to Carlos Busso for serving as external reviewer.'
      f'</p><figure class="news-photo"><a href="{LINKS["thesis_news"]}"><picture><source type="image/webp" srcset="assets/phd-defence.webp">'
      '<img src="assets/phd-defence.jpg" alt="Group photo after the PhD defence, with the external reviewer joining by video on the screen behind." width="733" height="414" loading="lazy"></picture></a>'
      f'<figcaption>After the defence, February 2026. <a href="{LINKS["thesis_news"]}">Read the department news</a></figcaption></figure><p class="sr-only">'),
@@ -431,7 +431,6 @@ def index_page():
       <div><dt>Defended</dt><dd>12 February 2026</dd></div>
       <div><dt>Supervisors</dt><dd>Prof. Timo Gerkmann<br>Prof. Nale Lehmann-Willenbrock</dd></div>
       <div><dt>External reviewer</dt><dd>Prof. Carlos Busso</dd></div>
-      <div><dt>Committee</dt><dd>Prof. Frank Steinicke<br>Prof. Stefan Wermter</dd></div>
     </dl>
     <p class="thesis-intro">Current AI systems still lack social intelligence: the ability to perceive and express the social signals that make collaboration work. The dissertation focuses on affect, and studies it in three settings.</p>
     {thesis_fig()}
