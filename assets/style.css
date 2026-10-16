@@ -363,3 +363,9 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   body { background: #fff; color: #000; }
 }
 .nowrap { white-space: nowrap; }
+.thesis-facts { margin: 0 0 1.75rem; padding: 0; border-top: 1px solid var(--rule); max-width: 34rem; }
+.thesis-facts > div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 0 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--rule); }
+.thesis-facts dt { font-family: var(--sans); font-size: var(--t-sm); color: var(--muted); }
+.thesis-facts dd { margin: 0; font-size: var(--t-sm); line-height: 1.5; }
+@media (max-width: 520px) { .thesis-facts > div { grid-template-columns: minmax(0, 1fr); } }
+.section .dist { margin: 1.75rem 0 2.25rem; }
