@@ -210,27 +210,6 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   .portrait { order: -1; justify-self: start; max-width: 13rem; }
 }
 
-.dist { margin: 1.75rem 0 2rem; max-width: 30rem; }
-/* The one bold element: annotator distribution figure */
-.dist { margin: 0; }
-.dist svg { display: block; width: 100%; height: auto; overflow: visible; }
-.dist .axis { stroke: var(--rule); stroke-width: 1; }
-.dist .tick { fill: var(--muted); font-family: var(--sans); font-size: 11px; }
-.dist .annot { fill: none; stroke: var(--annot); stroke-width: 1.1; }
-.dist .rating { fill: var(--annot); }
-.dist .agg { fill: none; stroke: var(--accent); stroke-width: 2.6; stroke-linecap: round; }
-.dist .agg-fill { fill: var(--accent-wash); stroke: none; }
-.dist .mean { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 3; }
-.dist .lbl { fill: var(--muted); font-family: var(--sans); font-size: 11.5px; }
-.dist .lbl-accent { fill: var(--accent); font-family: var(--sans); font-size: 11.5px; font-weight: 600; }
-.dist figcaption { font-size: var(--t-sm); color: var(--muted); margin-top: 0.75rem; max-width: 46ch; line-height: 1.5; }
-@media (prefers-reduced-motion: no-preference) {
-  .dist.play .annot { opacity: 0; animation: fade 0.5s ease-out forwards; }
-  .dist.play .rating { opacity: 0; animation: fade 0.4s ease-out forwards; }
-  .dist.play .agg { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw 1.4s cubic-bezier(.6,.05,.25,1) 0.9s forwards; }
-  .dist.play .agg-fill, .dist.play .mean, .dist.play .lbl-accent { opacity: 0; animation: fade 0.6s ease-out 1.9s forwards; }
-}
-@keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes fade { to { opacity: 1; } }
 
 /* ---------- Now ---------- */
@@ -243,13 +222,17 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 }
 .thesis-meta { font-family: var(--sans); font-size: var(--t-sm); color: var(--muted); margin-bottom: 1.6rem; line-height: 1.55; }
 .thesis-meta span { display: block; }
-.strands { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--gap); margin: 2rem 0; }
-.strand h3 { font-size: var(--t-base); margin-bottom: 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--ink); }
+.strands { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 var(--gap); margin: 1.75rem 0 0; }
+.strand h3 { display: flex; align-items: center; gap: 0.5rem; font-size: var(--t-base); line-height: 1.25; margin-bottom: 0.5rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--ink); }
+.strand h3 .num {
+  flex: none; width: 1.25rem; height: 1.25rem; border-radius: 50%; display: inline-grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-size: 0.72rem; font-weight: 650;
+}
 .strand ol { margin: 0; padding: 0; list-style: none; counter-reset: rq; }
 .strand li { padding: 0.7rem 0; border-bottom: 1px solid var(--rule); font-size: var(--t-sm); line-height: 1.5; }
 .strand li a { display: block; font-family: var(--sans); font-size: var(--t-xs); margin-top: 0.25rem; color: var(--muted); }
 .strand li a:hover { color: var(--accent); }
-@media (max-width: 640px) { .strands { grid-template-columns: minmax(0, 1fr); gap: 2rem; } }
+@media (max-width: 800px) { .strands { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; } }
 
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
 .btn {
@@ -368,19 +351,21 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .thesis-facts dt { font-family: var(--sans); font-size: var(--t-sm); color: var(--muted); }
 .thesis-facts dd { margin: 0; font-size: var(--t-sm); line-height: 1.5; }
 @media (max-width: 520px) { .thesis-facts > div { grid-template-columns: minmax(0, 1fr); } }
-.section .dist { margin: 1.75rem 0 2.25rem; }
 
-/* ---------- Dissertation overview and column charts ---------- */
+/* ---------- Dissertation overview ---------- */
 .thesis > p, .thesis .thesis-title { max-width: var(--measure); }
 .thesis .thesis-title { max-width: 26ch; }
 .thesis-intro { margin-bottom: 1.25rem; }
 
-.scene { margin: 0 0 0.5rem; }
+.scene { margin: 0 0 1rem; }
 .scene svg { display: block; width: 100%; max-width: 36rem; height: auto; overflow: visible; }
 .scene .person .head, .scene .person .torso, .scene .agent .face, .scene .agent .body, .scene .agent .dot { fill: var(--ink); opacity: 0.8; }
 .scene .agent line { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; opacity: 0.8; }
-.scene .agent .eye { fill: var(--bg); }
-.scene .speech { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.scene .agent .eye, .scene .agent .mouth { fill: var(--bg); }
+.scene .speech { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; opacity: 0; }
+.scene .person.is-focus .speech { opacity: 1; }
+.scene .head-g, .scene .speech, .scene .eyes, .scene .mouth, .scene .face-g, .scene .agent .dot { transform-box: fill-box; transform-origin: 50% 50%; }
+.scene .head-g, .scene .face-g { transform-origin: 50% 100%; }
 .scene .table, .scene .table-rim { fill: var(--panel); stroke: var(--annot); stroke-width: 1.2; stroke-linejoin: round; }
 .scene .paper { fill: var(--bg); stroke: var(--annot); stroke-width: 1; stroke-linejoin: round; }
 .scene .zone { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
@@ -395,40 +380,48 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   background: var(--accent); color: var(--accent-ink); font-size: 0.7rem; font-weight: 650;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .scene.armed .zone, .scene.armed .badge, .scene.armed .waves, .scene.armed .speech { opacity: 0; }
-  .scene.play .zone, .scene.play .badge, .scene.play .waves, .scene.play .speech { animation: fade 0.5s ease-out forwards; }
-  .scene.play .zone-1, .scene.play .badge-1, .scene.play .speech { animation-delay: 0.1s; }
+  .scene.armed .zone, .scene.armed .badge { opacity: 0; }
+  .scene.play .zone, .scene.play .badge { animation: fade 0.5s ease-out forwards; }
+  .scene.play .zone-1, .scene.play .badge-1 { animation-delay: 0.1s; }
   .scene.play .zone-2, .scene.play .badge-2 { animation-delay: 0.55s; }
-  .scene.play .zone-3, .scene.play .badge-3, .scene.play .waves { animation-delay: 1s; }
-}
+  .scene.play .zone-3, .scene.play .badge-3 { animation-delay: 1s; }
 
-.strand .dist { margin: 0 0 0.5rem; max-width: none; }
-.strand .dist figcaption { font-size: var(--t-xs); max-width: none; margin-top: 0.5rem; }
-.pipe .wave { fill: none; stroke: var(--annot); stroke-width: 2.2; stroke-linecap: round; }
-.pipe .wave.out { stroke: var(--accent); }
-.pipe .flow { fill: none; stroke: var(--rule); stroke-width: 1.2; }
-.pipe .ah { fill: var(--rule); }
-.pipe .pill rect, .pipe .box rect { fill: none; stroke: var(--ink); stroke-width: 1.2; opacity: 0.75; }
-.pipe .pill text, .pipe .box text { fill: var(--ink); font-family: var(--sans); font-size: 11.5px; }
-.pipe .pill.is-emotion rect { stroke: var(--accent); opacity: 1; fill: var(--accent-wash); }
-.pipe .pill.is-emotion text { fill: var(--accent); font-weight: 600; }
-.pipe .ctl line { stroke: var(--rule); stroke-width: 1.5; stroke-linecap: round; }
-.pipe .ctl circle { fill: var(--accent); }
-.pipe .wave.out-low { opacity: 0; }
-.pipe .ctl text { fill: var(--muted); font-family: var(--sans); font-size: 10.5px; }
-@media (prefers-reduced-motion: no-preference) {
-  .pipe.play .pill, .pipe.play .ctl, .pipe.play .box, .pipe.play .wave.out, .pipe.play .flow { opacity: 0; animation: fade 0.5s ease-out forwards; }
-  .pipe.play .flow { animation-delay: 0.2s; }
-  .pipe.play .pill { animation-delay: 0.4s; }
-  .pipe.play .ctl { animation-delay: 0.9s; }
-  .pipe.play .box { animation-delay: 1.2s; }
-  .pipe.play .wave.out-high { animation: fade 0.5s ease-out 1.5s forwards, swap-high 8s ease-in-out 2.6s infinite; }
-  .pipe.play .wave.out-low { animation: swap-low 8s ease-in-out 2.6s infinite; }
-  .pipe.play .ctl circle { animation: slide 8s ease-in-out 2.6s infinite; }
+  /* The meeting loops every 12 s: each person speaks in turn, then the agent answers. */
+  .scene.play .person .speech { opacity: 0; animation: turn 12s linear infinite both, talk 0.42s ease-in-out infinite alternate; }
+  .scene.play .person-1 .speech { animation-delay: 1.2s, 0s; }
+  .scene.play .person-2 .speech { animation-delay: 4.2s, 0.1s; }
+  .scene.play .person-3 .speech { animation-delay: 7.2s, 0.2s; }
+  .scene.play .person .head-g { animation: nod 12s ease-in-out infinite both; }
+  .scene.play .person-1 .head-g { animation-delay: 1.2s; }
+  .scene.play .person-2 .head-g { animation-delay: 4.2s; }
+  .scene.play .person-3 .head-g { animation-delay: 7.2s; }
+  .scene.play .person { animation: listen 12s ease-in-out infinite both; }
+  .scene.play .person-2 { animation-delay: 0.12s; }
+  .scene.play .person-3 { animation-delay: 0.24s; }
+  .scene.play .waves { animation: turn 12s linear infinite both; animation-delay: 10.2s; }
+  .scene.play .waves path { animation: ripple 1.1s ease-out infinite; }
+  .scene.play .waves path:nth-child(2) { animation-delay: 0.22s; }
+  .scene.play .waves path:nth-child(3) { animation-delay: 0.44s; }
+  .scene.play .agent .mouth { animation: speak 12s ease-in-out infinite both; animation-delay: 10.2s; }
+  .scene.play .agent .face-g { animation: tilt 12s ease-in-out infinite both; animation-delay: 10.2s; }
+  .scene.play .agent .eyes { animation: blink 4.6s ease-in-out infinite; }
+  .scene.play .agent .dot { animation: pulse 2.2s ease-in-out infinite; }
 }
-@keyframes slide { 0%, 20% { transform: translateX(0); } 40%, 60% { transform: translateX(-82px); } 80%, 100% { transform: translateX(0); } }
-@keyframes swap-high { 0%, 20% { opacity: 1; } 40%, 60% { opacity: 0; } 80%, 100% { opacity: 1; } }
-@keyframes swap-low { 0%, 20% { opacity: 0; } 40%, 60% { opacity: 1; } 80%, 100% { opacity: 0; } }
+/* one 12 s cycle: a 3 s turn, on from 2% to 22% of the cycle */
+@keyframes turn { 0%, 100% { opacity: 0; } 2%, 22% { opacity: 1; } 25% { opacity: 0; } }
+@keyframes talk { from { transform: scaleY(0.55); } to { transform: scaleY(1.15); } }
+@keyframes nod { 0%, 25%, 100% { transform: rotate(0); } 4% { transform: rotate(2.5deg); } 9% { transform: rotate(-1.2deg); } 14% { transform: rotate(2deg); } 20% { transform: rotate(-0.6deg); } }
+@keyframes listen { 0%, 84%, 96%, 100% { transform: translateY(0); } 87% { transform: translateY(1.6px); } 90% { transform: translateY(0); } 93% { transform: translateY(1.4px); } }
+@keyframes ripple { 0% { opacity: 0.15; } 45% { opacity: 1; } 100% { opacity: 0.15; } }
+@keyframes speak {
+  0%, 25%, 100% { transform: scaleY(1); }
+  3%, 9%, 15%, 21% { transform: scaleY(3.2); }
+  6%, 12%, 18% { transform: scaleY(1.4); }
+}
+@keyframes tilt { 0%, 25%, 100% { transform: rotate(0); } 3% { transform: rotate(-4deg); } 22% { transform: rotate(-4deg); } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes pulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 0.35; transform: scale(1.5); } }
+
 
 .news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }
 .news-photo img { display: block; width: 100%; height: auto; border-radius: 4px; background: var(--panel); }

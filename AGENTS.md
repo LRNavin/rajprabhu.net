@@ -36,15 +36,15 @@ Always commit the regenerated HTML in the same commit as the `build.py` change t
 - **Add news:** prepend a tuple to `NEWS`: `(iso_date, display_label, html)`. Link papers with `publications.html#<id>`.
 - **CV entries:** edit `EDUCATION`, `EXPERIENCE`, `TEACHING`, `INTERESTS`.
 - **Job title or bio:** the intro sentence is in `index_page()`; the title also appears in `EXPERIENCE` and in the JSON-LD `jobTitle` inside `page()`. Change all three together.
-- **Dissertation section:** the facts list and the two columns (Recognising affect, Synthesising affect in speech) are in `index_page()`. The overview diagram is `scene_svg()`; the column figures are `dist_svg()` (label distribution) and `conversion_svg()` (the emotion conversion pipeline).
+- **Dissertation section:** the facts list and the three columns (1 Individual-level affect recognition, 2 Group-level affect recognition, 3 Affect synthesis) are in `index_page()`; their numbers match the badges in the overview diagram `scene_svg()`, which sits above them. There are no other figures.
 
 ## Design rules
 
 - Colours come only from the CSS variables on `:root` in `style.css`. Every variable has light and dark values, defined twice for dark mode: under `@media (prefers-color-scheme: dark)` guarded by `:root:not([data-theme="light"])`, and under `:root[data-theme="dark"]`. Update both blocks when adding a variable. Check every change in both themes.
 - Typography: Schibsted Grotesk for headings and UI text, Source Serif 4 for body text. Sentence case everywhere; no all-caps labels.
 - One accent colour (`--accent`) for links, the dashed contribution boxes and chart highlights. Do not add more accents or gradients.
-- Figures (`scene_svg()`, `dist_svg()`, `conversion_svg()`) are drawn in code as inline SVG and coloured with CSS variables so they follow the theme. Keep them inline; an `<img>` SVG cannot see the page's theme. New illustrations should match this style: thin neutral strokes, one accent colour, sans labels, no traced or clip-art imagery.
-- Motion: only the figure reveals in the dissertation section, triggered once on scroll (`playOnView` in `main.js`), plus the slow arousal-slider loop in `conversion_svg()`; all wrapped in `prefers-reduced-motion: no-preference`. Do not add animations elsewhere.
+- The overview figure (`scene_svg()`) is drawn in code as inline SVG and coloured with CSS variables so they follow the theme. Keep it inline; an `<img>` SVG cannot see the page's theme. New illustrations should match this style: thin neutral strokes, one accent colour, sans labels, no traced or clip-art imagery.
+- Motion: only the overview figure moves. Its zones and badges fade in once on scroll (`playOnView` in `main.js`); it then loops a 12 s meeting (each person speaks and nods in turn, the agent answers with waves, blinks and a pulsing antenna). The timing lives in the `.scene.play` rules in `style.css`; moving parts use `transform-box: fill-box` so they rotate about themselves. All of it is wrapped in `prefers-reduced-motion: no-preference`, where the figure is static. Do not add animations elsewhere.
 - Layout must not scroll sideways at 360 px wide. Keep visible focus outlines and meaningful `alt` text.
 
 ## Rules that must not be broken

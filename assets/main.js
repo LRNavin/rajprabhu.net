@@ -35,7 +35,7 @@
     if (mq.addEventListener) mq.addEventListener("change", onChange);
   }
 
-  /* ---------- Figures: play their one-time animation when scrolled into view ---------- */
+  /* ---------- Overview figure: reveal once on scroll, then loop (see style.css) ---------- */
   function playOnView(el, threshold) {
     if (!("IntersectionObserver" in window)) { el.classList.add("play"); return; }
     el.classList.add("armed");
@@ -46,11 +46,6 @@
     }, { threshold: threshold });
     io.observe(el);
   }
-  document.querySelectorAll(".dist").forEach(function (fig) {
-    var agg = fig.querySelector(".agg");
-    if (agg && agg.getTotalLength) agg.style.setProperty("--len", Math.ceil(agg.getTotalLength()));
-    playOnView(fig, 0.5);
-  });
   document.querySelectorAll(".scene").forEach(function (fig) { playOnView(fig, 0.35); });
 
   /* ---------- Publications: filters ---------- */

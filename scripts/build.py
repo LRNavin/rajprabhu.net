@@ -317,76 +317,38 @@ def pub_html(p, with_abstract=True, heading="h3"):
 
 
 # ---------------------------------------------------------------- hero figure
-def dist_svg():
-    """Six annotators rate one utterance's arousal (1–7); the aggregate t-distribution is the thesis' view of ground truth."""
-    W, H = 460, 250
-    x0, x1 = 24, W - 16
-    base = H - 46
-    ratings = [3.1, 3.7, 4.0, 4.3, 4.9, 5.6]
-    def X(v): return x0 + (v - 1) / 6 * (x1 - x0)
-    def gauss(x, m, s): return math.exp(-0.5 * ((x - m) / s) ** 2)
-    def tpdf(x, m, s, nu):
-        z = (x - m) / s
-        return (1 + z * z / nu) ** (-(nu + 1) / 2)
-    n = len(ratings)
-    mean = sum(ratings) / n
-    sd = math.sqrt(sum((r - mean) ** 2 for r in ratings) / (n - 1))
-    xs = [1 + i * 6 / 240 for i in range(241)]
-
-    annot_paths = []
-    for i, r in enumerate(ratings):
-        pts = [(X(x), base - 62 * gauss(x, r, 0.34)) for x in xs]
-        d = "M" + " L".join(f"{a:.1f},{b:.1f}" for a, b in pts)
-        annot_paths.append(f'<path class="annot" style="animation-delay:{0.08*i:.2f}s" d="{d}"/>')
-    agg_pts = [(X(x), base - 150 * tpdf(x, mean, sd, n - 1)) for x in xs]
-    agg_d = "M" + " L".join(f"{a:.1f},{b:.1f}" for a, b in agg_pts)
-    fill_d = agg_d + f" L{X(7):.1f},{base} L{X(1):.1f},{base} Z"
-    dots = "".join(f'<circle class="rating" style="animation-delay:{0.08*i:.2f}s" cx="{X(r):.1f}" cy="{base + 9}" r="3"/>' for i, r in enumerate(ratings))
-    ticks = "".join(f'<text class="tick" x="{X(v):.1f}" y="{base + 28}" text-anchor="middle">{v}</text>' for v in range(1, 8))
-    peak_y = base - 150
-    lab_x = mean + 1.05
-    lab_y = base - 150 * tpdf(lab_x, mean, sd, n - 1) - 4
-    return f"""<figure class="dist" aria-labelledby="dist-cap">
-<svg viewBox="0 0 {W} {H}" role="img" aria-label="Six annotators rate the arousal of one utterance between about 3 and 5.6 on a 1 to 7 scale. Thin curves show each rating; a bold Student-t curve shows the distribution a model learns instead of a single mean.">
-  <path class="agg-fill" d="{fill_d}"/>
-  {''.join(annot_paths)}
-  <line class="axis" x1="{x0}" x2="{x1}" y1="{base}" y2="{base}"/>
-  {dots}
-  {ticks}
-  <line class="mean" x1="{X(mean):.1f}" x2="{X(mean):.1f}" y1="{base}" y2="{peak_y - 6}"/>
-  <path class="agg" d="{agg_d}"/>
-  <text class="lbl-accent" x="{X(lab_x) + 10:.1f}" y="{lab_y:.1f}">Label distribution</text>
-  <text class="lbl" x="{x0}" y="{H - 2}">Low arousal</text>
-  <text class="lbl" x="{x1}" y="{H - 2}" text-anchor="end">High arousal</text>
-</svg>
-<figcaption id="dist-cap">People disagree about the emotion in a voice. The models learn that disagreement instead of averaging it away.</figcaption>
-</figure>"""
-
-
-
 def scene_svg():
     """Dissertation overview after Figure 1.1 of the thesis, drawn from scratch: a meeting seen from across
     the table. Three people sit behind it as flat silhouettes and a social agent sits at the right end.
-    (1) one person's affect, (2) the group's affect, (3) the agent expressing affect in speech."""
+    (1) one person's affect, (2) the group's affect, (3) the agent expressing affect in speech.
+    The scene loops: the people take turns speaking (bars above a shoulder, a small nod), the agent
+    answers with sound waves, blinks and lets its antenna light pulse. The CSS in style.css times it."""
     tx, ty, trx, try_ = 320, 205, 240, 36   # table ellipse
-    def person(x, y, r, cls="person"):
-        """A flat silhouette: head and a torso with sloped shoulders. The table hides the lower torso."""
+    def person(n, x, y, r, cls="person"):
+        """A flat silhouette: head and a torso with sloped shoulders. The table hides the lower torso.
+        The head is wrapped in its own group so it can nod; the speech bars sit beside it."""
         w, top = 2.0 * r, y + 1.2 * r
         d = (f"M{x-w:.1f},215 V{top+20:.1f} Q{x-w:.1f},{top+2:.1f} {x-w*0.5:.1f},{top:.1f} "
              f"L{x-r*0.4:.1f},{top-3:.1f} L{x+r*0.4:.1f},{top-3:.1f} L{x+w*0.5:.1f},{top:.1f} "
              f"Q{x+w:.1f},{top+2:.1f} {x+w:.1f},{top+20:.1f} V215 Z")
-        return f'<g class="{cls}"><path class="torso" d="{d}"/><circle class="head" cx="{x}" cy="{y}" r="{r}"/></g>'
+        sx = x + r + 7
+        bars = f"M{sx},{y-4}v8M{sx+5},{y-9}v18M{sx+10},{y-6}v12M{sx+15},{y-3}v6"
+        return (f'<g class="{cls} person-{n}"><path class="torso" d="{d}"/>'
+                f'<g class="head-g"><circle class="head" cx="{x}" cy="{y}" r="{r}"/></g>'
+                f'<path class="speech" d="{bars}"/></g>')
     def paper(x, y):
         return f'<path class="paper" d="M{x-14},{y} l22,-6 l11,5 l-22,6 Z"/>'
     out = []
-    out.append(person(160, 118, 19))
-    out.append(person(280, 116, 19, "person is-focus"))
-    out.append(person(400, 118, 19))
+    out.append(person(1, 160, 118, 19))
+    out.append(person(2, 280, 116, 19, "person is-focus"))
+    out.append(person(3, 400, 118, 19))
     ax, ay = 520, 118
     out.append(f'<g class="agent">'
                f'<line x1="{ax}" x2="{ax}" y1="{ay-19}" y2="{ay-27}"/><circle class="dot" cx="{ax}" cy="{ay-30}" r="2.8"/>'
+               f'<g class="face-g">'
                f'<rect class="face" x="{ax-22}" y="{ay-19}" width="44" height="38" rx="14"/>'
-               f'<circle class="eye" cx="{ax-9}" cy="{ay}" r="3.2"/><circle class="eye" cx="{ax+9}" cy="{ay}" r="3.2"/>'
+               f'<g class="eyes"><circle class="eye" cx="{ax-9}" cy="{ay}" r="3.2"/><circle class="eye" cx="{ax+9}" cy="{ay}" r="3.2"/></g>'
+               f'<rect class="mouth" x="{ax-7}" y="{ay+9}" width="14" height="2.6" rx="1.3"/></g>'
                f'<path class="body" d="M{ax-26},215 V{ay+47} C{ax-26},{ay+32} {ax-14},{ay+26} {ax},{ay+26} S{ax+26},{ay+32} {ax+26},{ay+47} V215 Z"/></g>')
     out.append(f'<path class="table-rim" d="M{tx-trx},{ty} v9 A{trx},{try_} 0 0 0 {tx+trx},{ty+9} v-9 Z"/>')
     out.append(f'<ellipse class="table" cx="{tx}" cy="{ty}" rx="{trx}" ry="{try_}"/>')
@@ -394,7 +356,6 @@ def scene_svg():
     out.append('<rect class="zone zone-2" x="100" y="76" width="350" height="118" rx="12"/>')
     out.append('<rect class="zone zone-1" x="232" y="84" width="96" height="110" rx="9"/>')
     out.append('<rect class="zone zone-3" x="468" y="76" width="104" height="118" rx="12"/>')
-    out.append('<path class="speech" d="M306,114v8M311,109v18M316,112v12M321,115v6"/>')
     wx, wy = ax - 30, ay - 2
     arcs = []
     for r in (14, 26, 38):
@@ -404,61 +365,10 @@ def scene_svg():
     for n, (bx, by) in {1: (232, 84), 2: (100, 76), 3: (468, 76)}.items():
         out.append(f'<g class="badge badge-{n}"><circle cx="{bx}" cy="{by}" r="13"/><text x="{bx}" y="{by + 4.5}" text-anchor="middle">{n}</text></g>')
     return f"""<figure class="scene" aria-labelledby="scene-cap">
-<svg viewBox="76 58 500 196" role="img" aria-label="Diagram after Figure 1.1 of the dissertation: three people sit behind a meeting table and a small robot sits at its right end, emitting sound waves towards them. A box marks one person (1, individual-level affect recognition), a dashed box encloses the three people (2, group-level affect recognition), and a dashed box marks the robot (3, affect synthesis).">
+<svg viewBox="76 58 500 196" role="img" aria-label="Diagram after Figure 1.1 of the dissertation: three people sit behind a meeting table and take turns speaking; a small robot sits at its right end and answers with sound waves. A box marks one person (1, individual-level affect recognition), a dashed box encloses the three people (2, group-level affect recognition), and a dashed box marks the robot (3, affect synthesis).">
 {''.join(out)}
 </svg>
 <figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
-</figure>"""
-
-
-def conversion_svg():
-    """Illustration of speech emotion conversion as a pipeline: speech is split into speaker, content and
-    emotion embeddings, only the emotion is changed, and a decoder resynthesises the sentence."""
-    W, H = 460, 250
-    mid = 118
-    def wave(x, n, step, scale, cls):
-        bars = []
-        for i in range(n):
-            env = math.sin(math.pi * (i + 0.5) / n) ** 0.7
-            h = scale * env * (0.55 + 0.45 * abs(math.sin(i * 2.3 + 0.4)))
-            bars.append(f"M{x + i * step:.1f},{mid - h:.1f}v{2 * h:.1f}")
-        return f'<path class="wave {cls}" d="{"".join(bars)}"/>'
-    pills = [("Speaker", 58, ""), ("Content", mid, ""), ("Emotion", 178, " is-emotion")]
-    px0, px1 = 128, 226
-    out = []
-    # input speech
-    out.append(wave(14, 15, 5, 26, "in"))
-    out.append(f'<text class="lbl" x="48" y="{mid + 44}" text-anchor="middle">Input speech</text>')
-    # split into three embeddings
-    out.append(f'<path class="flow" d="M90,{mid}H110"/>')
-    out.append(f'<path class="flow" d="M110,58V178"/>')
-    for name, y, extra in pills:
-        out.append(f'<path class="flow" d="M110,{y}H{px0 - 2}" marker-end="url(#ah)"/>')
-        out.append(f'<g class="pill{extra}"><rect x="{px0}" y="{y - 15}" width="{px1 - px0}" height="30" rx="15"/>'
-                   f'<text x="{(px0 + px1) / 2}" y="{y + 4}" text-anchor="middle">{name}</text></g>')
-    # arousal control on the emotion embedding
-    sy = 214
-    out.append(f'<g class="ctl"><line x1="{px0 + 8}" x2="{px1 - 8}" y1="{sy}" y2="{sy}"/>'
-               f'<circle cx="{px1 - 8}" cy="{sy}" r="4.5"/>'
-               f'<text x="{px0 + 8}" y="{sy + 16}">Low</text><text x="{px1 - 8}" y="{sy + 16}" text-anchor="end">High</text>'
-               f'<text class="lbl-accent" x="{(px0 + px1) / 2}" y="{sy - 9}" text-anchor="middle">Arousal</text></g>')
-    # merge into the decoder
-    out.append(f'<path class="flow" d="M{px1},58H246V178H{px1}"/>')
-    out.append(f'<path class="flow" d="M{px1},{mid}H246"/>')
-    out.append(f'<path class="flow" d="M246,{mid}H268" marker-end="url(#ah)"/>')
-    out.append(f'<g class="box"><rect x="272" y="{mid - 22}" width="78" height="44" rx="6"/>'
-               f'<text x="311" y="{mid + 4}" text-anchor="middle">Decoder</text></g>')
-    out.append(f'<path class="flow" d="M350,{mid}H370" marker-end="url(#ah)"/>')
-    # converted speech: same sentence, higher and faster
-    out.append(wave(380.5, 15, 4.2, 34, "out out-high"))
-    out.append(wave(371.5, 15, 5.4, 22, "out out-low"))
-    out.append(f'<text class="lbl" x="410" y="{mid + 44}" text-anchor="middle">Converted speech</text>')
-    return f"""<figure class="dist pipe" aria-labelledby="conv-cap">
-<svg viewBox="0 0 {W} {H}" role="img" aria-label="Pipeline diagram. Input speech is split into speaker, content and emotion embeddings. An arousal control changes only the emotion embedding. A decoder turns the three embeddings back into converted speech; as the control moves between low and high, the output waveform changes with it.">
-  <defs><marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0.5L7.5,4L0,7.5Z"/></marker></defs>
-  {''.join(out)}
-</svg>
-<figcaption id="conv-cap">Who is speaking and what is said stay the same; only how it is said changes. The same sentence is re-spoken with a different emotion.</figcaption>
 </figure>"""
 
 
@@ -500,21 +410,25 @@ def index_page():
       <div><dt>Supervisors</dt><dd>Prof. Timo Gerkmann<br>Prof. Nale Lehmann-Willenbrock</dd></div>
       <div><dt>External reviewer</dt><dd>Prof. Carlos Busso</dd></div>
     </dl>
-    <p class="thesis-intro">Current AI systems still lack social intelligence: the ability to perceive and express the social signals that make collaboration work. The dissertation focuses on affect and studies it at three levels, in two lines of work.</p>
+    <p class="thesis-intro">Current AI systems still lack social intelligence: the ability to perceive and express the social signals that make collaboration work. The dissertation focuses on affect and studies it in three directions: recognising it in one person, recognising it in a group, and synthesising it in speech.</p>
     {scene_svg()}
-    <div class="strands">
+    <div class="strands three">
       <div class="strand">
-        <h3>Recognising affect</h3>
-        {dist_svg()}
+        <h3><b class="num">1</b>Individual-level affect recognition</h3>
         <ol>
           <li>Bayesian neural networks trained on the full distribution of annotations, so models capture annotator disagreement as well as the mean.<a href="publications.html#bnn-arousal-interspeech-2022">Interspeech 2022, IEEE TAFFC 2023</a></li>
           <li>Student's t-distributions in place of Gaussians, linking how few annotations exist to how uncertain a label is.<a href="publications.html#t-dist-acii-2022">ACII 2022</a></li>
-          <li>A psychology-grounded protocol for annotating group affect over time, and multimodal models of how groups converge and diverge.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></li>
         </ol>
       </div>
       <div class="strand">
-        <h3>Synthesising affect in speech</h3>
-        {conversion_svg()}
+        <h3><b class="num">2</b>Group-level affect recognition</h3>
+        <ol>
+          <li>A psychology-grounded protocol for annotating the affect of a whole group over time, and a study of why such behavioural labels are subjective and uncertain.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026, OUP book chapter 2025</a></li>
+          <li>Multimodal models of how the emotions of group members converge and diverge during a meeting.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></li>
+        </ol>
+      </div>
+      <div class="strand">
+        <h3><b class="num">3</b>Affect synthesis</h3>
         <ol>
           <li>Emotion conversion without parallel data, by disentangling speaker, lexical and emotion embeddings and resynthesising with a HiFiGAN vocoder.<a href="publications.html#ssl-sec-itg-2023">ITG Speech Communication 2023</a></li>
           <li>Diffusion decoders that widen the range of emotions that can be expressed, especially rare, extreme arousal.<a href="publications.html#emoconv-diff-icassp-2024">ICASSP 2024</a></li>
