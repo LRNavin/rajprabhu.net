@@ -154,8 +154,10 @@ THESIS = dict(
 NEWS = [
     ("2026-02", "Feb 2026",
      'Defended my PhD at the University of Hamburg: <a href="publications.html#dissertation-2026"><em>Probabilistic and Generative Modeling for Emotion Recognition and Synthesis</em></a>. '
-     'Thank you to Carlos Busso for serving as external reviewer, and to Frank Steinicke and Stefan Wermter on the committee. '
-     f'<a href="{LINKS["thesis_news"]}">Read the department news</a>.'),
+     'Thank you to Carlos Busso for serving as external reviewer, and to Frank Steinicke and Stefan Wermter on the committee.'
+     f'</p><figure class="news-photo"><a href="{LINKS["thesis_news"]}"><picture><source type="image/webp" srcset="assets/phd-defence.webp">'
+     '<img src="assets/phd-defence.jpg" alt="Group photo after the PhD defence, with the external reviewer joining by video on the screen behind." width="733" height="414" loading="lazy"></picture></a>'
+     f'<figcaption>After the defence, February 2026. <a href="{LINKS["thesis_news"]}">Read the department news</a></figcaption></figure><p class="sr-only">'),
     ("2026", "2026",
      'Our work on collective group affect, with annotations and multimodal models of convergence and divergence, is published in <a href="publications.html#group-affect-taffc-2026"><em>IEEE Transactions on Affective Computing</em></a>.'),
     ("2025-12", "Dec 2025",

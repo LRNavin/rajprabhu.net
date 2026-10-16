@@ -404,3 +404,8 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .contribs .c-links { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; margin-top: 0.35rem; font-family: var(--sans); font-size: var(--t-xs); }
 .contribs .dist { margin: 1rem 0 0.25rem; max-width: 26rem; }
 .contribs .dist figcaption { font-size: var(--t-xs); max-width: 44ch; }
+.news-photo { margin: 0.9rem 0 0.2rem; max-width: 30rem; }
+.news-photo img { display: block; width: 100%; height: auto; border-radius: 4px; background: var(--panel); }
+.news-photo a:hover img { opacity: 0.92; }
+.news-photo figcaption { font-family: var(--sans); font-size: var(--t-xs); color: var(--muted); margin-top: 0.5rem; line-height: 1.5; }
+.sr-only:empty { display: none; }
