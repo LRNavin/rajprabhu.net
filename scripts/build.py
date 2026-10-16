@@ -353,22 +353,31 @@ def scene_svg():
     out.append(f'<path class="table-rim" d="M{tx-trx},{ty} v9 A{trx},{try_} 0 0 0 {tx+trx},{ty+9} v-9 Z"/>')
     out.append(f'<ellipse class="table" cx="{tx}" cy="{ty}" rx="{trx}" ry="{try_}"/>')
     out.append(paper(190, 190) + paper(312, 184) + paper(432, 190))
-    out.append('<rect class="zone zone-2" x="100" y="76" width="350" height="118" rx="12"/>')
-    out.append('<rect class="zone zone-1" x="232" y="84" width="96" height="110" rx="9"/>')
-    out.append('<rect class="zone zone-3" x="468" y="76" width="104" height="118" rx="12"/>')
+    # (2) the group: a dashed capsule around the three people
+    out.append('<rect class="zone zone-2" x="100" y="76" width="350" height="118" rx="40"/>')
+    # (3) the agent: a dashed speech bubble whose tail points at the people
+    out.append('<path class="zone zone-3" d="M480,76H560Q572,76 572,88V182Q572,194 560,194H480Q468,194 468,182V127L452,117L468,107V88Q468,76 480,76Z"/>')
+    # (1) one person: a viewfinder frame that slides to whoever is speaking (CSS "track"); drawn on the middle seat
+    fx, fy, fw, fh, c, k = 232, 84, 96, 110, 9, 16
+    corners = (f"M{fx},{fy+k}V{fy+c}Q{fx},{fy} {fx+c},{fy}H{fx+k}"
+               f"M{fx+fw-k},{fy}H{fx+fw-c}Q{fx+fw},{fy} {fx+fw},{fy+c}V{fy+k}"
+               f"M{fx+fw},{fy+fh-k}V{fy+fh-c}Q{fx+fw},{fy+fh} {fx+fw-c},{fy+fh}H{fx+fw-k}"
+               f"M{fx+k},{fy+fh}H{fx+c}Q{fx},{fy+fh} {fx},{fy+fh-c}V{fy+fh-k}")
+    out.append(f'<g class="focus"><rect class="zone zone-1 wash" x="{fx}" y="{fy}" width="{fw}" height="{fh}" rx="{c}"/>'
+               f'<path class="zone zone-1 frame" d="{corners}"/>'
+               f'<g class="badge badge-1"><circle cx="{fx + fw / 2}" cy="{fy}" r="13"/><text x="{fx + fw / 2}" y="{fy + 4.5}" text-anchor="middle">1</text></g></g>')
     wx, wy = ax - 30, ay - 2
     arcs = []
     for r in (14, 26, 38):
         dy, dx = r * math.sin(math.radians(40)), r * math.cos(math.radians(40))
         arcs.append(f'<path d="M{wx-dx:.1f},{wy-dy:.1f}A{r},{r} 0 0 0 {wx-dx:.1f},{wy+dy:.1f}"/>')
     out.append(f'<g class="waves">{"".join(arcs)}</g>')
-    for n, (bx, by) in {1: (232, 84), 2: (100, 76), 3: (468, 76)}.items():
+    for n, (bx, by) in {2: (113, 89), 3: (468, 76)}.items():
         out.append(f'<g class="badge badge-{n}"><circle cx="{bx}" cy="{by}" r="13"/><text x="{bx}" y="{by + 4.5}" text-anchor="middle">{n}</text></g>')
-    return f"""<figure class="scene" aria-labelledby="scene-cap">
-<svg viewBox="76 58 500 196" role="img" aria-label="Diagram after Figure 1.1 of the dissertation: three people sit behind a meeting table and take turns speaking; a small robot sits at its right end and answers with sound waves. A box marks one person (1, individual-level affect recognition), a dashed box encloses the three people (2, group-level affect recognition), and a dashed box marks the robot (3, affect synthesis).">
+    return f"""<figure class="scene">
+<svg viewBox="76 58 500 196" role="img" aria-label="Diagram after Figure 1.1 of the dissertation: three people sit behind a meeting table and take turns speaking; a small robot sits at its right end and answers with sound waves. A frame follows whoever is speaking (1, individual affect), a dashed capsule encloses the three people (2, group affect), and a dashed speech bubble marks the robot (3, affect synthesis).">
 {''.join(out)}
 </svg>
-<figcaption id="scene-cap"><span class="key"><b>1</b>Individual-level affect recognition</span><span class="key"><b>2</b>Group-level affect recognition</span><span class="key"><b>3</b>Affect synthesis</span></figcaption>
 </figure>"""
 
 
@@ -414,25 +423,27 @@ def index_page():
     {scene_svg()}
     <div class="strands three">
       <div class="strand">
-        <h3><b class="num">1</b>Individual-level affect recognition</h3>
+        <h3><b class="num">1</b>Individual affect</h3>
         <ol>
-          <li>Bayesian neural networks trained on the full distribution of annotations, so models capture annotator disagreement as well as the mean.<a href="publications.html#bnn-arousal-interspeech-2022">Interspeech 2022, IEEE TAFFC 2023</a></li>
-          <li>Student's t-distributions in place of Gaussians, linking how few annotations exist to how uncertain a label is.<a href="publications.html#t-dist-acii-2022">ACII 2022</a></li>
+          <li>Bayesian networks trained on the full spread of annotations, not just their mean.<span class="refs"><a href="publications.html#bnn-arousal-interspeech-2022">Interspeech 2022</a><a href="publications.html#bnn-ldl-taffc-2023">IEEE TAFFC 2023</a></span></li>
+          <li>Student's t-distributions instead of Gaussians, so fewer annotations mean a more uncertain label.<span class="refs"><a href="publications.html#t-dist-acii-2022">ACII 2022</a></span></li>
+          <li>Audio-textual distillation for efficient self-supervised emotion recognition.<span class="refs"><a href="publications.html#distilled-ser-interspeech-2023">Interspeech 2023</a></span></li>
         </ol>
       </div>
       <div class="strand">
-        <h3><b class="num">2</b>Group-level affect recognition</h3>
+        <h3><b class="num">2</b>Group affect</h3>
         <ol>
-          <li>A psychology-grounded protocol for annotating the affect of a whole group over time, and a study of why such behavioural labels are subjective and uncertain.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026, OUP book chapter 2025</a></li>
-          <li>Multimodal models of how the emotions of group members converge and diverge during a meeting.<a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></li>
+          <li>A psychology-grounded protocol for annotating the affect of a whole group over time.<span class="refs"><a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></span></li>
+          <li>Why behavioural labels of groups are subjective and uncertain.<span class="refs"><a href="publications.html#behavioral-labels-oup-2025">OUP chapter 2025</a></span></li>
+          <li>Multimodal models of how group members' emotions converge and diverge.<span class="refs"><a href="publications.html#group-affect-taffc-2026">IEEE TAFFC 2026</a></span></li>
         </ol>
       </div>
       <div class="strand">
         <h3><b class="num">3</b>Affect synthesis</h3>
         <ol>
-          <li>Emotion conversion without parallel data, by disentangling speaker, lexical and emotion embeddings and resynthesising with a HiFiGAN vocoder.<a href="publications.html#ssl-sec-itg-2023">ITG Speech Communication 2023</a></li>
-          <li>Diffusion decoders that widen the range of emotions that can be expressed, especially rare, extreme arousal.<a href="publications.html#emoconv-diff-icassp-2024">ICASSP 2024</a></li>
-          <li>A duration predictor that lets speech rate follow arousal: slower when calm, faster when excited.<a href="publications.html#duration-asru-2025">IEEE ASRU 2025</a></li>
+          <li>Emotion conversion without parallel data, by disentangling speaker, content and emotion.<span class="refs"><a href="publications.html#ssl-sec-itg-2023">ITG 2023</a></span></li>
+          <li>Diffusion decoders that reach rare, extreme arousal.<span class="refs"><a href="publications.html#emoconv-diff-icassp-2024">ICASSP 2024</a></span></li>
+          <li>Speech rate that follows arousal: slower when calm, faster when excited.<span class="refs"><a href="publications.html#duration-asru-2025">IEEE ASRU 2025</a></span></li>
         </ol>
       </div>
     </div>

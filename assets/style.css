@@ -223,16 +223,19 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .thesis-meta { font-family: var(--sans); font-size: var(--t-sm); color: var(--muted); margin-bottom: 1.6rem; line-height: 1.55; }
 .thesis-meta span { display: block; }
 .strands { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 var(--gap); margin: 1.75rem 0 0; }
-.strand h3 { display: flex; align-items: center; gap: 0.5rem; font-size: var(--t-base); line-height: 1.25; margin-bottom: 0.5rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--ink); }
+.strand { display: grid; grid-template-rows: auto 1fr; }
+@supports (grid-template-rows: subgrid) { .strand { grid-row: span 2; grid-template-rows: subgrid; } }
+.strand h3 { display: flex; align-items: flex-end; gap: 0.5rem; font-size: var(--t-base); line-height: 1.25; margin-bottom: 0.5rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--ink); }
 .strand h3 .num {
   flex: none; width: 1.25rem; height: 1.25rem; border-radius: 50%; display: inline-grid; place-items: center;
   background: var(--accent); color: var(--accent-ink); font-size: 0.72rem; font-weight: 650;
 }
 .strand ol { margin: 0; padding: 0; list-style: none; counter-reset: rq; }
 .strand li { padding: 0.7rem 0; border-bottom: 1px solid var(--rule); font-size: var(--t-sm); line-height: 1.5; }
-.strand li a { display: block; font-family: var(--sans); font-size: var(--t-xs); margin-top: 0.25rem; color: var(--muted); }
-.strand li a:hover { color: var(--accent); }
-@media (max-width: 800px) { .strands { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; } }
+.strand .refs { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.45rem; }
+.strand .refs a { font-family: var(--sans); font-size: var(--t-xs); line-height: 1.3; color: var(--muted); text-decoration: none; border: 1px solid var(--rule); border-radius: 999px; padding: 0.12rem 0.55rem; }
+.strand .refs a:hover, .strand .refs a:focus-visible { color: var(--accent); border-color: var(--accent); }
+@media (max-width: 800px) { .strands { grid-template-columns: minmax(0, 1fr); gap: 0; } .strand + .strand h3 { margin-top: 1.75rem; } }
 
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
 .btn {
@@ -369,16 +372,12 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
 .scene .table, .scene .table-rim { fill: var(--panel); stroke: var(--annot); stroke-width: 1.2; stroke-linejoin: round; }
 .scene .paper { fill: var(--bg); stroke: var(--annot); stroke-width: 1; stroke-linejoin: round; }
 .scene .zone { fill: var(--accent-wash); stroke: var(--accent); stroke-width: 1.3; stroke-dasharray: 4 4; }
-.scene .zone-1 { stroke-dasharray: none; stroke-width: 1.6; }
+.scene .zone-1 { stroke-dasharray: none; }
+.scene .zone-1.wash { stroke: none; }
+.scene .zone-1.frame { fill: none; stroke-width: 1.8; stroke-linecap: round; }
 .scene .waves path { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; }
 .scene .badge circle { fill: var(--accent); }
 .scene .badge text { fill: var(--accent-ink); font-family: var(--sans); font-size: 13px; font-weight: 650; }
-.scene figcaption { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; margin-top: 0.4rem; font-family: var(--sans); font-size: var(--t-xs); color: var(--muted); }
-.scene .key { display: inline-flex; align-items: center; gap: 0.45rem; }
-.scene .key b {
-  width: 1.15rem; height: 1.15rem; border-radius: 50%; display: inline-grid; place-items: center;
-  background: var(--accent); color: var(--accent-ink); font-size: 0.7rem; font-weight: 650;
-}
 @media (prefers-reduced-motion: no-preference) {
   .scene.armed .zone, .scene.armed .badge { opacity: 0; }
   .scene.play .zone, .scene.play .badge { animation: fade 0.5s ease-out forwards; }
@@ -387,6 +386,7 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   .scene.play .zone-3, .scene.play .badge-3 { animation-delay: 1s; }
 
   /* The meeting loops every 12 s: each person speaks in turn, then the agent answers. */
+  .scene.play .focus { animation: track 12s ease-in-out infinite both; }
   .scene.play .person .speech { opacity: 0; animation: turn 12s linear infinite both, talk 0.42s ease-in-out infinite alternate; }
   .scene.play .person-1 .speech { animation-delay: 1.2s, 0s; }
   .scene.play .person-2 .speech { animation-delay: 4.2s, 0.1s; }
@@ -408,6 +408,7 @@ main { max-width: var(--page); margin: 0 auto; padding: 0 var(--gap); }
   .scene.play .agent .dot { animation: pulse 2.2s ease-in-out infinite; }
 }
 /* one 12 s cycle: a 3 s turn, on from 2% to 22% of the cycle */
+@keyframes track { 0%, 32% { transform: translateX(-120px); } 36%, 57% { transform: translateX(0); } 61%, 82% { transform: translateX(120px); } 90%, 100% { transform: translateX(-120px); } }
 @keyframes turn { 0%, 100% { opacity: 0; } 2%, 22% { opacity: 1; } 25% { opacity: 0; } }
 @keyframes talk { from { transform: scaleY(0.55); } to { transform: scaleY(1.15); } }
 @keyframes nod { 0%, 25%, 100% { transform: rotate(0); } 4% { transform: rotate(2.5deg); } 9% { transform: rotate(-1.2deg); } 14% { transform: rotate(2deg); } 20% { transform: rotate(-0.6deg); } }
