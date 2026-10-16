@@ -218,6 +218,9 @@ INTERESTS = ["Generative modeling", "Probabilistic and uncertainty modeling", "S
 ICON_SUN = '<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>'
 ICON_MOON = '<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>'
 
+# The ai-coustics mark, taken from the company's own site; the one brand mark on this site. It follows the theme through currentColor.
+AIC_MARK = '<svg class="aic-mark" viewBox="0 0 22 22" aria-hidden="true"><path fill="currentColor" d="M21.996 10.948H22C22 17.052 17.076 22 11 22 4.923 22 0 17.051 0 10.948h10.997C11.052 4.893 15.955 0 21.996 0ZM16.628 6.056c-.681 0-1.232.555-1.231 1.238 0 .684.552 1.238 1.232 1.237.681 0 1.232-.555 1.232-1.238-.001-.684-.553-1.238-1.233-1.237Z"/></svg>'
+
 THEME_BOOT = """<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>"""
 
 
@@ -392,7 +395,11 @@ def index_page():
   <div class="hero-text">
     <h1>Navin Raj Prabhu</h1>
     <p class="lede">I research how machines can recognise and generate emotion in human speech.</p>
-    <p class="intro">PhD in Computer Science from the University of Hamburg, where I built probabilistic and generative models for emotion recognition and speech emotion conversion. I'm now a Machine Learning Researcher at <a class="nowrap" href="{LINKS['aicoustics']}">ai-coustics</a> in Berlin.</p>
+    <p class="intro">PhD in Computer Science from the University of Hamburg, where I built probabilistic and generative models for emotion recognition and speech emotion conversion.</p>
+    <p class="now-at">
+      {AIC_MARK}
+      <span>I'm now a Machine Learning Researcher at <a class="nowrap" href="{LINKS['aicoustics']}">ai-coustics</a> in Berlin.<span class="tagline">Audio intelligence for voice AI</span></span>
+    </p>
     <ul class="contact-links">
       <li><a href="{LINKS['email']}">Email</a></li>
       <li><a href="{LINKS['scholar']}">Google Scholar</a></li>
