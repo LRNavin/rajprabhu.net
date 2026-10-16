@@ -6,7 +6,6 @@ Personal research website of Navin Raj Prabhu, served by GitHub Pages from the `
 
 - `index.html`, `publications.html`, `cv.html`, `404.html`: generated pages (do not edit by hand)
 - `scripts/build.py`: page templates and all content (publications, news, CV)
-- `scripts/figure/`: vector paths for the redrawn Figure 1.1 of the dissertation, and the script that traces them
 - `assets/`: stylesheet, script, fonts (self-hosted) and images
 
 ## Making a change

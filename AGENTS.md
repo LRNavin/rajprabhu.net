@@ -16,7 +16,6 @@ A static personal research site for Navin Raj Prabhu (Machine Learning Researche
 | `assets/main.js` | Theme toggle, publication filters, abstract toggles, figure animations | Yes |
 | `assets/fonts/` | Self-hosted Source Serif 4 and Schibsted Grotesk (OFL licences included) | Rarely |
 | `assets/portrait*`, `assets/phd-defence*` | Images (JPEG plus WebP) | Replace, keep names |
-| `scripts/figure/` | Vector paths for the redrawn dissertation Figure 1.1, and `trace.py` that regenerates them | Only through `trace.py` |
 | `.nojekyll` | Stops GitHub Pages running Jekyll | Keep |
 
 ## Workflow
@@ -37,15 +36,15 @@ Always commit the regenerated HTML in the same commit as the `build.py` change t
 - **Add news:** prepend a tuple to `NEWS`: `(iso_date, display_label, html)`. Link papers with `publications.html#<id>`.
 - **CV entries:** edit `EDUCATION`, `EXPERIENCE`, `TEACHING`, `INTERESTS`.
 - **Job title or bio:** the intro sentence is in `index_page()`; the title also appears in `EXPERIENCE` and in the JSON-LD `jobTitle` inside `page()`. Change all three together.
-- **Dissertation section:** facts list, figure and contribution list are in `index_page()` and `thesis_fig()`.
+- **Dissertation section:** the facts list and the two columns (Recognising affect, Synthesising affect in speech) are in `index_page()`. The overview diagram is `scene_svg()`; the column charts are `dist_svg()` (label distribution) and `conversion_svg()` (pitch contours, illustrative).
 
 ## Design rules
 
 - Colours come only from the CSS variables on `:root` in `style.css`. Every variable has light and dark values, defined twice for dark mode: under `@media (prefers-color-scheme: dark)` guarded by `:root:not([data-theme="light"])`, and under `:root[data-theme="dark"]`. Update both blocks when adding a variable. Check every change in both themes.
 - Typography: Schibsted Grotesk for headings and UI text, Source Serif 4 for body text. Sentence case everywhere; no all-caps labels.
 - One accent colour (`--accent`) for links, the dashed contribution boxes and chart highlights. Do not add more accents or gradients.
-- Figures (the label distribution chart from `dist_svg()` and Figure 1.1 from `thesis_fig()`) are inline SVG coloured with CSS variables so they follow the theme. Keep them inline; an `<img>` SVG cannot see the page's theme.
-- Motion: only the two figure reveals, triggered once on scroll, and wrapped in `prefers-reduced-motion: no-preference`. Do not add entrance animations elsewhere.
+- Figures (`scene_svg()`, `dist_svg()`, `conversion_svg()`) are drawn in code as inline SVG and coloured with CSS variables so they follow the theme. Keep them inline; an `<img>` SVG cannot see the page's theme. New illustrations should match this style: thin neutral strokes, one accent colour, sans labels, no traced or clip-art imagery.
+- Motion: only the figure reveals in the dissertation section, triggered once on scroll (`playOnView` in `main.js`) and wrapped in `prefers-reduced-motion: no-preference`. Do not add entrance animations elsewhere.
 - Layout must not scroll sideways at 360 px wide. Keep visible focus outlines and meaningful `alt` text.
 
 ## Rules that must not be broken
@@ -54,10 +53,6 @@ Always commit the regenerated HTML in the same commit as the `build.py` change t
 - **Privacy.** Never publish the phone number, home address or date of birth that appear in the CV PDFs. The public email is `lr.navin@gmail.com`. Strip metadata from new images (re-save them with Pillow) and provide JPEG plus WebP.
 - **Accuracy.** Only list facts that can be verified (publication pages, DOIs, the university repository). Do not invent dates, roles, links or code repositories. Abstracts are the author's own, taken from arXiv or the publisher page.
 - **Do not hand-edit generated HTML**; the next build will overwrite it.
-
-## Regenerating Figure 1.1
-
-Only needed if the traced artwork itself must change. Instructions are at the top of `scripts/figure/trace.py` (extract page 17 of the dissertation PDF with `pdfimages`, install `opencv-python-headless numpy potracer`, run the script). Box positions in `thesis_fig()` share the image's pixel coordinates.
 
 ## Hosting
 
